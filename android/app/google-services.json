@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "756414699752",
+    "project_id": "parkyou-ffa9d",
+    "storage_bucket": "parkyou-ffa9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756414699752:android:6d1176b07549df72e8115d",
+        "android_client_info": {
+          "package_name": "com.example.parkyou"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "756414699752-ptapvqltt3pgr7spl3hqc2lnombhn7lc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGMCDLnR8QHLUr7rj9aAPf63IG5WdO_4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "756414699752-ptapvqltt3pgr7spl3hqc2lnombhn7lc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
