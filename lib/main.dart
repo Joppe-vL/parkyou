@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 void main() async{
   await Firebase.initializeApp(
@@ -16,7 +19,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Map Example',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter Map Example'),
+        ),
+        body: FlutterMap(
+          options: MapOptions(
+            center: LatLng(51.5, -0.09),
+            zoom: 13.0,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+            ),
+          ],
+        ),
+      ),
+    );
+      /*title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -30,7 +52,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    );*/
   }
 }
 
