@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'features/The_Map/open_street_map.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
-void main() async{
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
+
+FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,26 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Map Example',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter Map Example'),
-        ),
-        body: FlutterMap(
-          options: MapOptions(
-            center: LatLng(51.5, -0.09),
-            zoom: 13.0,
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-              userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-            ),
-          ],
-        ),
-      ),
-    );
-      /*title: 'Flutter Demo',
+      title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -51,8 +34,9 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );*/
+      //home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: OpenStreetMap(),
+    );
   }
 }
 
