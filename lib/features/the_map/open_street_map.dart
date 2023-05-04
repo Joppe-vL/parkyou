@@ -5,13 +5,15 @@ import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 import 'package:geocoding/geocoding.dart';
 
 class OpenStreetMap extends StatefulWidget {
+  const OpenStreetMap({Key? key}) : super(key: key);
+
   @override
-  _OpenStreetMapState createState() => _OpenStreetMapState();
+  OpenStreetMapState createState() => OpenStreetMapState();
 }
 
-class _OpenStreetMapState extends State<OpenStreetMap> {
+class OpenStreetMapState extends State<OpenStreetMap> {
   LatLng? _tappedPoint;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   void _handleTap(TapPosition pos, LatLng point) {
     setState(() {
@@ -47,22 +49,22 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Search for an address...',
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 ElevatedButton(
                   onPressed: _searchAddress,
-                  child: Text('Search'),
+                  child: const Text('Search'),
                 ),
               ],
             ),
@@ -88,9 +90,7 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
                         width: 80.0,
                         height: 80.0,
                         point: _tappedPoint!,
-                        builder: (ctx) => Container(
-                          child: Icon(Icons.location_pin),
-                        ),
+                        builder: (ctx) => const Icon(Icons.location_pin),
                       ),
                   ],
                 ),
