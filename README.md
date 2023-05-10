@@ -1,16 +1,21 @@
-# parkyou
+# Parkyou
 
-A new Flutter project.
+## Group Members
 
-## Getting Started
+- Jan Cuypers (Studentaccount456)
+- Joppe Van Loon (Joppe-vL)
 
-This project is a starting point for a Flutter application.
+### !!Beware that this Readme is still under construction!!
 
-A few resources to get you started if this is your first Flutter project:
+### A. Project description
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+This is a school project of which the goal is to have the students make a flutter application. This application is a community app for making parking spaces available that are at your disposal.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### B. Main technologies in use
+
+- Flutter
+- OpenStreetMap
+
+### C. Logo
+
+![LogoParkYou](/ImagesForReadme/ParkYouLogo.png)
