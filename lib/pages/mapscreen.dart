@@ -170,6 +170,8 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search location',
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                 suffixIcon: IconButton(
                   onPressed: _handleSearch,
                   icon: Icon(Icons.search),

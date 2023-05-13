@@ -1,0 +1,12 @@
+export 'package:parkyou/pages/edit_vehicle.dart';
+export 'package:parkyou/pages/add_vehiclescreen.dart';
+export 'package:parkyou/pages/remove_parkspot.dart';
+export 'package:parkyou/pages/release_parkspot.dart';
+export 'package:parkyou/pages/mapscreen.dart';
+export 'package:parkyou/pages/vehiclescreen.dart';
+export 'package:parkyou/pages/accountscreen.dart';
+export 'package:parkyou/pages/reserve_parkspotscreen.dart';
+export 'package:parkyou/pages/registerscreen.dart';
+export 'package:parkyou/pages/loginscreen.dart';
+export 'package:parkyou/pages/forgotpassword.dart';
+export 'package:parkyou/pages/changepassword.dart';

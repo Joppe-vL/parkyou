@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:parkyou/features/navigation_bar.dart';
+import 'package:parkyou/pages/pages_barrel.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'features/The_Map/open_street_map.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -10,35 +11,94 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    const MyApp(),
+    MyApp(),
   );
 }
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  // This widget is the root of your application.
+  // Method to check if the bottom navigation bar should be visible for a screen
+  bool _isBottomNavBarVisible(String routeName) {
+    // Specify the screens that should not have the bottom navigation bar
+    List<String> screensWithoutNavBar = [
+      '/loginscreen',
+      '/changepassword',
+      '/forgotpassword',
+      '/registerscreen',
+    ];
+
+    return !screensWithoutNavBar.contains(routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false, // To remove debug banner
+      title: 'Parkyou',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.purple,
+        primarySwatch: Colors.blue,
       ),
-      debugShowCheckedModeBanner: false,
-      //home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: OpenStreetMap(),
+      navigatorKey: navigatorKey,
+      initialRoute: '/mapscreen',
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => _wrapScrollConfiguration(
+            settings,
+            _getPage(settings),
+          ),
+          settings: settings,
+        );
+      },
     );
+  }
+
+  Widget _wrapScrollConfiguration(RouteSettings settings, Widget page) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: page,
+            ),
+            if (_isBottomNavBarVisible(settings.name.toString()))
+              NavigationBara(destination: settings.name.toString()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getPage(RouteSettings settings) {
+    switch (settings.name) {
+      case '/removeparkscreen':
+        return RemoveParkSpot();
+      case '/releaseparkscreen':
+        return ReleaseParkSpot();
+      case '/mapscreen':
+        return OpenStreetMap();
+      case '/vehiclescreen':
+        return VehicleScreen();
+      case '/accountscreen':
+        return AccountScreen();
+      case '/edit_vehiclescreen':
+        return EditVehicle();
+      case '/addvehicle':
+        return AddVehicle();
+      case '/reserveparkspot':
+        return ReserveParkSpot();
+      case '/loginscreen':
+        return LoginScreen();
+      case '/changepassword':
+        return ChangePassword();
+      case '/forgotpassword':
+        return ForgotPasswordscreen();
+      case '/registerscreen':
+        return Registerscreen();
+      default:
+        throw Exception('Invalid route: ${settings.name}');
+    }
   }
 }
