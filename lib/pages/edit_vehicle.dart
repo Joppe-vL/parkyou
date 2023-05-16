@@ -19,10 +19,7 @@ class _EditVehicleState extends State<EditVehicle> {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-            child:
-
-                ///***If you have exported images you must have to copy those images in assets/images directory.
-                Image(
+            child: Image(
               image: AssetImage("assets/images/Bigger.png"),
               height: 100,
               width: 140,

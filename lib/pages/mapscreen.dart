@@ -14,6 +14,9 @@ class OpenStreetMap extends StatefulWidget {
 }
 
 class _OpenStreetMapState extends State<OpenStreetMap> {
+  bool _showAddressSnackBar = false;
+  String _addressSnackBarText = '';
+
   LatLng? _tappedPoint;
   TextEditingController _searchController = TextEditingController();
   MapController _mapController = MapController();
@@ -59,7 +62,7 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
     setState(() {});
   }
 
-  void _handleTap(TapPosition pos, LatLng point) {
+  void _handleTap(TapPosition pos, LatLng point) async {
     setState(() {
       _tappedPoint = point;
       _markers.clear();
@@ -73,15 +76,13 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
       ));
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Lat: ${point.latitude}, Lng: ${point.longitude}'),
-        action: SnackBarAction(
-          label: 'OK',
-          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-        ),
-      ),
-    );
+    final address = await _getAddress(point.latitude, point.longitude);
+    final simplifiedAddress = _simplifyAddress(address);
+
+    setState(() {
+      _showAddressSnackBar = true;
+      _addressSnackBarText = 'Address: $simplifiedAddress';
+    });
   }
 
   Future<void> _handleSearch() async {
@@ -97,6 +98,7 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to search for location'),
+          behavior: SnackBarBehavior.fixed,
           action: SnackBarAction(
             label: 'OK',
             onPressed: () =>
@@ -112,6 +114,7 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Location not found'),
+          behavior: SnackBarBehavior.fixed,
           action: SnackBarAction(
             label: 'OK',
             onPressed: () =>
@@ -124,10 +127,15 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
 
     final lat = double.parse(data[0]['lat']);
     final lon = double.parse(data[0]['lon']);
+    final displayName = data[0]['display_name'];
 
     final point = LatLng(lat, lon);
 
+    final address = _simplifyAddress(displayName);
+
     setState(() {
+      _addressSnackBarText = 'Address: $address';
+      _showAddressSnackBar = true;
       _tappedPoint = point;
       _markers.clear();
       _markers.add(Marker(
@@ -139,16 +147,6 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
         ),
       ));
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Lat: ${point.latitude}, Lng: ${point.longitude}'),
-        action: SnackBarAction(
-          label: 'OK',
-          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-        ),
-      ),
-    );
 
     _mapController.move(point, 15.0);
   }
@@ -206,6 +204,50 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
         child: Icon(Icons.search),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      bottomNavigationBar: _showAddressSnackBar
+          ? Container(
+              color: Colors.grey[300],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(_addressSnackBarText),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _showAddressSnackBar = false;
+                      });
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
+}
+
+Future<String> _getAddress(double latitude, double longitude) async {
+  final url =
+      'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1';
+
+  final response = await http.get(Uri.parse(url));
+  if (response.statusCode != 200) {
+    return 'Failed to retrieve address';
+  }
+
+  final data = json.decode(response.body);
+  final address = data['display_name'];
+  return address;
+}
+
+String _simplifyAddress(String displayName) {
+  final addressComponents = displayName.split(', ');
+  final streetNumber = addressComponents.length > 0 ? addressComponents[0] : '';
+  final streetName = addressComponents.length > 1 ? addressComponents[1] : '';
+  final city = addressComponents.length > 2 ? addressComponents[2] : '';
+  return '$streetName $streetNumber, $city';
 }

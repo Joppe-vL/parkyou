@@ -7,7 +7,7 @@ class Registerscreen extends StatefulWidget {
 }
 
 class _RegisterscreenState extends State<Registerscreen> {
-  Color buttonColor = Color(0xff00c1ff); // Initialize buttonColor
+  Color buttonColor = Color(0xff00c1ff);
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +211,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                         child: Builder(
                           builder: (context) => MaterialButton(
                             onPressed: () {
-                              // Change the button color to green for 2 seconds
+                              // To change the button color to green for 2 seconds
                               setState(() {
                                 buttonColor = Colors.green;
                               });

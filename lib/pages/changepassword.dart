@@ -189,7 +189,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         child: Builder(
                           builder: (context) => MaterialButton(
                             onPressed: () {
-                              // Change the button color to green for 2 seconds
+                              // To change the button color to green for 2 seconds
                               setState(() {
                                 buttonColor = Colors.green;
                               });
@@ -205,7 +205,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                     context, '/accountscreen');
                               });
                             },
-                            color: buttonColor, // Use the buttonColor variable
+                            color: buttonColor,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),

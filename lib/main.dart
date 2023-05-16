@@ -20,12 +20,9 @@ FirebaseFirestore firestore = FirebaseFirestore.instance;
 class MyApp extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  // Method to check if the bottom navigation bar should be visible for a screen
   bool _isBottomNavBarVisible(String routeName) {
-    // Specify the screens that should not have the bottom navigation bar
     List<String> screensWithoutNavBar = [
       '/loginscreen',
-      '/changepassword',
       '/forgotpassword',
       '/registerscreen',
     ];
@@ -36,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // To remove debug banner
+      debugShowCheckedModeBanner: false,
       title: 'Parkyou',
       theme: ThemeData(
         primarySwatch: Colors.blue,

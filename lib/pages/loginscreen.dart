@@ -40,7 +40,6 @@ class LoginScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    ///***If you have exported images you must have to copy those images in assets/images directory.
                     Image(
                       image: AssetImage("assets/images/ParkYouLogo.png"),
                       height: 100,
@@ -171,7 +170,6 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Builder(
                       builder: (context) => MaterialButton(
                         onPressed: () {
