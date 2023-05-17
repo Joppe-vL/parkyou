@@ -151,9 +151,9 @@ class _ForgotPasswordscreenState extends State<ForgotPasswordscreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(72, 0, 72, 0),
+              padding: EdgeInsets.fromLTRB(72, 320, 72, 0),
               child: Align(
-                alignment: Alignment(0.0, 0.5),
+                alignment: Alignment(0.0, 0.2),
                 child: Builder(
                   builder: (context) => MaterialButton(
                     onPressed: () {
