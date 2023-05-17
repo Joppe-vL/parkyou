@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 List<String> rvehicleOptions = [
   "Option 1",
@@ -13,6 +16,23 @@ class ReserveParkSpot extends StatefulWidget {
 
 class _ReserveParkSpotState extends State<ReserveParkSpot> {
   String selectedOption = "Option 1";
+  String location = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLocation();
+  }
+
+  Future<void> fetchLocation() async {
+    final fetchedLocation = await fetchDeviceLocation();
+    final simplifiedLocation = _simplifyAddress(fetchedLocation);
+
+    setState(() {
+      location = simplifiedLocation;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +102,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "Locatie",
+                        "$location",
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -291,4 +311,30 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
       ),
     );
   }
+}
+
+Future<String> fetchDeviceLocation() async {
+  Position position = await Geolocator.getCurrentPosition(
+    desiredAccuracy: LocationAccuracy.high,
+  );
+
+  final url =
+      'https://nominatim.openstreetmap.org/reverse?lat=${position.latitude}&lon=${position.longitude}&format=json';
+
+  final response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    final displayName = data['display_name'];
+    return displayName;
+  } else {
+    return 'Error retrieving location';
+  }
+}
+
+String _simplifyAddress(String displayName) {
+  final addressComponents = displayName.split(', ');
+  final streetNumber = addressComponents.length > 0 ? addressComponents[0] : '';
+  final streetName = addressComponents.length > 1 ? addressComponents[1] : '';
+  final city = addressComponents.length > 2 ? addressComponents[2] : '';
+  return '$streetName $streetNumber, $city';
 }
