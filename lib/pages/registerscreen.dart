@@ -10,7 +10,7 @@ class Registerscreen extends StatefulWidget {
 
 class _RegisterscreenState extends State<Registerscreen> {
   Color buttonColor = Color(0xff00c1ff);
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController controllerMail = TextEditingController();
   TextEditingController controllerPassword = TextEditingController();
 
@@ -216,7 +216,6 @@ class _RegisterscreenState extends State<Registerscreen> {
                         child: Builder(
                           builder: (context) => MaterialButton(
                             onPressed: () async {
-                              // To change the button color to green for 2 seconds
                               setState(() {
                                 buttonColor = Colors.green;
                               });

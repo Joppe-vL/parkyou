@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:parkyou/pages/registerscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController controllerMail = TextEditingController();
+  final TextEditingController controllerPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +71,7 @@ class LoginScreen extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                       child: TextField(
-                        controller: TextEditingController(),
+                        controller: controllerMail,
                         obscureText: false,
                         textAlign: TextAlign.left,
                         maxLines: 1,
@@ -108,7 +112,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     TextField(
-                      controller: TextEditingController(),
+                      controller: controllerPassword,
                       obscureText: false,
                       textAlign: TextAlign.start,
                       maxLines: 1,
@@ -173,7 +177,20 @@ class LoginScreen extends StatelessWidget {
                     Builder(
                       builder: (context) => MaterialButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/mapscreen');
+                          String email = controllerMail.text.trim();
+                          String password = controllerPassword.text.trim();
+
+                          _auth.signInWithEmailAndPassword(email: email, password: password)
+                              .then((userCredential) {
+                            // Login successful, navigate to the desired screen
+                            Navigator.pushReplacementNamed(context, '/mapscreen');
+                          })
+                              .catchError((error) {
+                            // An error occurred, display the error message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(error.toString())),
+                            );
+                          });
                         },
                         color: Color(0xff00c1ff),
                         elevation: 0,
