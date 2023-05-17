@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:parkyou/pages/registerscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget{
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController controllerMail = TextEditingController();
   final TextEditingController controllerPassword = TextEditingController();
+  bool obscurePassword = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,12 +114,14 @@ class LoginScreen extends StatelessWidget {
                           fillColor: Color(0xffffffff),
                           isDense: false,
                           contentPadding: EdgeInsets.all(0),
+                          prefixIcon: Icon(Icons.mail,
+                                color: Color(0xff000000), size: 24),
                         ),
                       ),
                     ),
                     TextField(
                       controller: controllerPassword,
-                      obscureText: false,
+                      obscureText: obscurePassword,
                       textAlign: TextAlign.start,
                       maxLines: 1,
                       style: TextStyle(
@@ -149,6 +157,16 @@ class LoginScreen extends StatelessWidget {
                         fillColor: Color(0xffffffff),
                         isDense: false,
                         contentPadding: EdgeInsets.all(0),
+                        prefixIcon: IconButton(
+                          icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off,
+                            color: Color(0xff000000), size: 24),
+                          onPressed: () {
+                          // Toggle the password visibility state
+                            setState(() {
+                              obscurePassword = !obscurePassword;
+                            });
+                          },
+                        ),
                       ),
                     ),
                     Padding(

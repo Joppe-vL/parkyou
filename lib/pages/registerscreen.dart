@@ -13,6 +13,7 @@ class _RegisterscreenState extends State<Registerscreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController controllerMail = TextEditingController();
   TextEditingController controllerPassword = TextEditingController();
+  bool obscurePassword = true; 
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +171,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                         padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                         child: TextField(
                           controller: controllerPassword,
-                          obscureText: false,
+                          obscureText: obscurePassword,
                           textAlign: TextAlign.start,
                           maxLines: 1,
                           style: TextStyle(
@@ -205,9 +206,17 @@ class _RegisterscreenState extends State<Registerscreen> {
                             filled: true,
                             fillColor: Color(0xffffffff),
                             isDense: false,
-                            contentPadding: EdgeInsets.all(8),
-                            prefixIcon: Icon(Icons.visibility_off,
-                                color: Color(0xff000000), size: 24),
+                            contentPadding: EdgeInsets.all(8),                                                            
+                            prefixIcon: IconButton(                              
+                              icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off,
+                                color: Color(0xff000000), size: 24),                            
+                              onPressed: () {
+                              // Toggle the password visibility state
+                                setState(() {
+                                  obscurePassword = !obscurePassword;
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ),
