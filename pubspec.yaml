@@ -38,7 +38,7 @@ dependencies:
   cloud_firestore: ^4.4.5
   image_picker: ^0.8.7+3
   firebase_database: ^10.1.0
-  firebase_auth: ^4.4.1
+  firebase_auth: ^4.6.1
   flutter_map: ^0.14.0
   latlong2: ^0.8.1
   positioned_tap_detector_2: ^1.0.4

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Registerscreen extends StatefulWidget {
   @override
@@ -8,6 +10,9 @@ class Registerscreen extends StatefulWidget {
 
 class _RegisterscreenState extends State<Registerscreen> {
   Color buttonColor = Color(0xff00c1ff);
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  TextEditingController controllerMail = TextEditingController();
+  TextEditingController controllerPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +124,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                         child: TextField(
-                          controller: TextEditingController(),
+                          controller: controllerMail,
                           obscureText: false,
                           textAlign: TextAlign.start,
                           maxLines: 1,
@@ -164,7 +169,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                         child: TextField(
-                          controller: TextEditingController(),
+                          controller: controllerPassword,
                           obscureText: false,
                           textAlign: TextAlign.start,
                           maxLines: 1,
@@ -210,22 +215,28 @@ class _RegisterscreenState extends State<Registerscreen> {
                         padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                         child: Builder(
                           builder: (context) => MaterialButton(
-                            onPressed: () {
+                            onPressed: () async {
                               // To change the button color to green for 2 seconds
                               setState(() {
                                 buttonColor = Colors.green;
                               });
 
-                              // Wait for 2 seconds
-                              Timer(Duration(seconds: 2), () {
-                                setState(() {
-                                  buttonColor = Color(0xff00c1ff);
-                                });
+                              try {
+                                UserCredential userCredential = 
+                                  await _auth.createUserWithEmailAndPassword(email: controllerMail.text, password: controllerPassword.text);                              
+
+                              setState(() {
+                                buttonColor = Color(0xff00c1ff);
+                              });
 
                                 // Redirect to the login screen
                                 Navigator.pushReplacementNamed(
                                     context, '/loginscreen');
-                              });
+                              } catch (e){
+                                 setState( (){
+                                  buttonColor = Color(0xff00c1ff);
+                                 });
+                              }
                             },
                             color: buttonColor,
                             elevation: 0,
