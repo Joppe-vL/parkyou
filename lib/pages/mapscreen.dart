@@ -199,9 +199,29 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _handleSearch,
-        child: Icon(Icons.search),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: Material(
+              color: Colors.transparent,
+              child: Builder(
+                builder: (context) => FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/reserveparkspot');
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 16.0),
+          FloatingActionButton(
+            onPressed: _handleSearch,
+            child: Icon(Icons.search),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: _showAddressSnackBar
@@ -213,14 +233,6 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(_addressSnackBarText),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _showAddressSnackBar = false;
-                      });
-                    },
-                    child: Text('OK'),
                   ),
                 ],
               ),
