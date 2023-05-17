@@ -9,7 +9,7 @@ class NavigationBara extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 56,
-      color: Colors.blue,
+      color: Color.fromARGB(255, 255, 230, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
