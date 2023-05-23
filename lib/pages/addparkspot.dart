@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class AddParkSpot extends StatefulWidget {
   @override
@@ -11,6 +12,10 @@ class AddParkSpot extends StatefulWidget {
 class _AddParkSpotState extends State<AddParkSpot> {
   String location = '';
   bool isChecked = false;
+  bool checkedvisbility = true;
+  DateTime currentDate = DateTime.now();
+  DateTime? selectedDate1;
+  DateTime? selectedDate2;
 
   @override
   void initState() {
@@ -25,6 +30,36 @@ class _AddParkSpotState extends State<AddParkSpot> {
     setState(() {
       location = simplifiedLocation;
     });
+  }
+
+  Future<void> selectDate1(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != selectedDate1) {
+      setState(() {
+        selectedDate1 = picked;
+      });
+    }
+  }
+
+  Future<void> selectDate2(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate2 ?? currentDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != selectedDate2) {
+      setState(() {
+        selectedDate2 = picked;
+      });
+    }
   }
 
   @override
@@ -87,6 +122,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   onChanged: (value) {
                     setState(() {
                       isChecked = value!;
+                      checkedvisbility = !value;
                     });
                   },
                   activeColor: Color(0xff3a57e8),
@@ -270,7 +306,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () => selectDate1(context),
                       color: Color(0xff00c1ff),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -279,7 +315,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                       ),
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        "Date1",
+                        DateFormat('dd-MM-yyyy').format(currentDate),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -292,44 +328,50 @@ class _AddParkSpotState extends State<AddParkSpot> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  child: Text(
-                    "To",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
+                Visibility(
+                  visible: checkedvisbility,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: MaterialButton(
-                      onPressed: () {},
-                      color: Color(0xff00c1ff),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50.0),
-                        side: BorderSide(color: Color(0xff000000), width: 1),
+                    child: Text(
+                      "To",
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 14,
+                        color: Color(0xff000000),
                       ),
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        "Date2",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: checkedvisbility,
+                  child: Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: MaterialButton(
+                        onPressed: () => selectDate2(context),
+                        color: Color(0xff00c1ff),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                          side: BorderSide(color: Color(0xff000000), width: 1),
                         ),
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          "Date2",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                        textColor: Color(0xff000000),
+                        height: 40,
+                        minWidth: 90,
                       ),
-                      textColor: Color(0xff000000),
-                      height: 40,
-                      minWidth: 90,
                     ),
                   ),
                 ),
