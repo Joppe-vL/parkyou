@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Registerscreen extends StatefulWidget {
   @override
@@ -11,8 +12,12 @@ class Registerscreen extends StatefulWidget {
 class _RegisterscreenState extends State<Registerscreen> {
   Color buttonColor = Color(0xff00c1ff);
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   TextEditingController controllerMail = TextEditingController();
   TextEditingController controllerPassword = TextEditingController();
+  TextEditingController controllerName = TextEditingController();
+
   bool obscurePassword = true; 
 
   @override
@@ -81,7 +86,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       TextField(
-                        controller: TextEditingController(),
+                        controller: controllerName,
                         obscureText: false,
                         textAlign: TextAlign.start,
                         maxLines: 1,
@@ -231,7 +236,14 @@ class _RegisterscreenState extends State<Registerscreen> {
 
                               try {
                                 UserCredential userCredential = 
-                                  await _auth.createUserWithEmailAndPassword(email: controllerMail.text, password: controllerPassword.text);                              
+                                  await _auth.createUserWithEmailAndPassword(email: controllerMail.text, password: controllerPassword.text);
+
+                                String userUid = userCredential.user!.uid; 
+
+                                await _firestore.collection('Users').doc(userUid).set({
+                                  'name': controllerName.text,
+                                  'email': controllerMail.text,
+                                });                             
 
                               setState(() {
                                 buttonColor = Color(0xff00c1ff);
