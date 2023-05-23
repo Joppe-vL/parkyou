@@ -94,6 +94,8 @@ class MyApp extends StatelessWidget {
         return ForgotPasswordscreen();
       case '/registerscreen':
         return Registerscreen();
+      case '/addparkspot':
+        return AddParkSpot();
       default:
         throw Exception('Invalid route: ${settings.name}');
     }

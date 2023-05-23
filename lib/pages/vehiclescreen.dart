@@ -145,30 +145,76 @@ class _VehicleScreenState extends State<VehicleScreen> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-            child: Builder(
-              builder: (context) => MaterialButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/addvehicle');
-                },
-                color: Color(0xff00c1ff),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
-                  side: BorderSide(color: Color(0xff000000), width: 1),
-                ),
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  "Add New Vehicle",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    fontStyle: FontStyle.normal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 5, 0),
+                    child: Builder(
+                      builder: (context) => MaterialButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                              context, '/addvehicle');
+                        },
+                        color: Color(0xff00c1ff),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                          side: BorderSide(color: Color(0xff000000), width: 1),
+                        ),
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          "Show all vehicles",
+                          style: TextStyle(
+                            fontSize: 13.4,
+                            fontWeight: FontWeight.w700,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                        textColor: Color(0xff000000),
+                        height: 40,
+                        minWidth: 140,
+                      ),
+                    ),
                   ),
                 ),
-                textColor: Color(0xff000000),
-                height: 40,
-                minWidth: 140,
-              ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(5, 0, 10, 0),
+                    child: Builder(
+                      builder: (context) => MaterialButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                              context, '/addvehicle');
+                        },
+                        color: Color(0xff00c1ff),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                          side: BorderSide(color: Color(0xff000000), width: 1),
+                        ),
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          "Add New Vehicle",
+                          style: TextStyle(
+                            fontSize: 13.4,
+                            fontWeight: FontWeight.w700,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                        textColor: Color(0xff000000),
+                        height: 40,
+                        minWidth: 140,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

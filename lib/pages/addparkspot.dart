@@ -3,20 +3,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-List<String> rvehicleOptions = [
-  "Option 1",
-  "Option 2",
-  "Option 3"
-]; // Unique values
-
-class ReserveParkSpot extends StatefulWidget {
+class AddParkSpot extends StatefulWidget {
   @override
-  _ReserveParkSpotState createState() => _ReserveParkSpotState();
+  _AddParkSpotState createState() => _AddParkSpotState();
 }
 
-class _ReserveParkSpotState extends State<ReserveParkSpot> {
-  String selectedOption = "Option 1";
-/*  String location = '';
+class _AddParkSpotState extends State<AddParkSpot> {
+  String location = '';
 
   @override
   void initState() {
@@ -31,7 +24,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
     setState(() {
       location = simplifiedLocation;
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +50,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
           Padding(
             padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
             child: Text(
-              "Reserve Parking Spot",
+              "Add Parking Spot",
               textAlign: TextAlign.start,
               overflow: TextOverflow.clip,
               style: TextStyle(
@@ -69,7 +62,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,7 +95,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,7 +131,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "location of firebase",
+                        "$location",
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -155,153 +148,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 18, 0),
-                  child: Text(
-                    "Vehicle:",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: Container(
-                      width: 130,
-                      height: 40,
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Color(0xffffffff),
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: DropdownButton(
-                        value: "Option 1",
-                        items: ["Option 1"]
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        style: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                        ),
-                        onChanged: (value) {},
-                        elevation: 8,
-                        isExpanded: true,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  child: Text(
-                    "Time available:",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    padding: EdgeInsets.all(0),
-                    width: 200,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Color(0x1f000000),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(color: Color(0x4d9e9e9e), width: 1),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            "Time1",
-                            textAlign: TextAlign.start,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                              fontSize: 14,
-                              color: Color(0xff000000),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                            child: Text(
-                              "-",
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 14,
-                                color: Color(0xff000000),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                            child: Text(
-                              "Time2",
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 14,
-                                color: Color(0xff000000),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -393,95 +240,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  child: Text(
-                    "Date available:",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    padding: EdgeInsets.zero,
-                    width: 200,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Color(0x1f000000),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(color: Color(0x4d9e9e9e), width: 1),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            "Date1",
-                            textAlign: TextAlign.start,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                              fontSize: 14,
-                              color: Color(0xff000000),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                            child: Text(
-                              "-",
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 14,
-                                color: Color(0xff000000),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                            child: Text(
-                              "Date2",
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 14,
-                                color: Color(0xff000000),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -573,7 +332,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
             child: Builder(
               builder: (context) => MaterialButton(
                 onPressed: () {
@@ -587,7 +346,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                 ),
                 padding: EdgeInsets.all(16),
                 child: Text(
-                  "Reserve",
+                  "Add Parking spot",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -606,7 +365,6 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
   }
 }
 
-/*
 Future<String> fetchDeviceLocation() async {
   Position position = await Geolocator.getCurrentPosition(
     desiredAccuracy: LocationAccuracy.high,
@@ -632,4 +390,3 @@ String _simplifyAddress(String displayName) {
   final city = addressComponents.length > 2 ? addressComponents[2] : '';
   return '$streetName $streetNumber, $city';
 }
-*/

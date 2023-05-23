@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parkyou/pages/registerscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginScreen extends StatefulWidget{
+class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -113,9 +113,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           filled: true,
                           fillColor: Color(0xffffffff),
                           isDense: false,
-                          contentPadding: EdgeInsets.all(0),
+                          contentPadding: EdgeInsets.all(16),
                           prefixIcon: Icon(Icons.mail,
-                                color: Color(0xff000000), size: 24),
+                              color: Color(0xff000000), size: 24),
                         ),
                       ),
                     ),
@@ -156,12 +156,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         filled: true,
                         fillColor: Color(0xffffffff),
                         isDense: false,
-                        contentPadding: EdgeInsets.all(0),
+                        contentPadding: EdgeInsets.all(16),
                         prefixIcon: IconButton(
-                          icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off,
-                            color: Color(0xff000000), size: 24),
+                          icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Color(0xff000000),
+                              size: 24),
                           onPressed: () {
-                          // Toggle the password visibility state
+                            // Toggle the password visibility state
                             setState(() {
                               obscurePassword = !obscurePassword;
                             });
@@ -198,12 +202,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           String email = controllerMail.text.trim();
                           String password = controllerPassword.text.trim();
 
-                          _auth.signInWithEmailAndPassword(email: email, password: password)
+                          _auth
+                              .signInWithEmailAndPassword(
+                                  email: email, password: password)
                               .then((userCredential) {
                             // Login successful, navigate to the desired screen
-                            Navigator.pushReplacementNamed(context, '/mapscreen');
-                          })
-                              .catchError((error) {
+                            Navigator.pushReplacementNamed(
+                                context, '/mapscreen');
+                          }).catchError((error) {
                             // An error occurred, display the error message
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(error.toString())),

@@ -10,3 +10,4 @@ export 'package:parkyou/pages/registerscreen.dart';
 export 'package:parkyou/pages/loginscreen.dart';
 export 'package:parkyou/pages/forgotpassword.dart';
 export 'package:parkyou/pages/changepassword.dart';
+export 'package:parkyou/pages/addparkspot.dart';
