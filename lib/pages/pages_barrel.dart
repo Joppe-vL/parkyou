@@ -14,3 +14,4 @@ export 'package:parkyou/pages/addparkspot.dart';
 export 'package:parkyou/pages/parkspotsscreen.dart';
 export 'package:parkyou/pages/yourparkspot.dart';
 export 'package:parkyou/pages/yourreservedspots.dart';
+export 'package:parkyou/pages/dumper.dart';

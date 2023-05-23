@@ -97,6 +97,101 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
     }
   }
 
+  void checkTime() {
+    if (selectedTime1 != null && selectedTime2 != null && isCheckboxSelected) {
+      if (selectedTime1!.isBefore(selectedTime2!)) {
+        Navigator.pushReplacementNamed(context, '/mapscreen');
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Invalid Time'),
+              content:
+                  Text('The start time must be earlier than the end time.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else if (!isCheckboxSelected) {
+      Navigator.pushReplacementNamed(context, '/mapscreen');
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Invalid Time'),
+            content: Text('Please select both start and end times.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void validateAndNavigate() {
+    if (selectedDate1 != null && selectedDate2 != null && !isOneDayChecked) {
+      if (selectedDate2!.isBefore(selectedDate1!)) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Invalid date selection."),
+              content: Text("End date cannot be earlier than start date."),
+              actions: [
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        checkTime(); // Call checkTime function to validate time
+      }
+    } else if (selectedDate1 != null && isOneDayChecked) {
+      selectedDate2 = null; // Set selectedDate2 to null for one-day parking
+      checkTime(); // Call checkTime function to validate time
+    } else {
+      // Handle case when dates are not selected
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("Please select both dates."),
+            actions: [
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -707,55 +802,7 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
             child: Builder(
               builder: (context) => MaterialButton(
                 onPressed: () {
-                  if (selectedDate1 != null &&
-                      selectedDate2 != null &&
-                      !isOneDayChecked) {
-                    if (selectedDate2!.isBefore(selectedDate1!)) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("Invalid date selection."),
-                            content: Text(
-                                "End date cannot be earlier than start date."),
-                            actions: [
-                              TextButton(
-                                child: Text("OK"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      Navigator.pushReplacementNamed(context, '/mapscreen');
-                    }
-                  } else if (selectedDate1 != null && isOneDayChecked) {
-                    selectedDate2 =
-                        null; // Set selectedDate2 to null for one-day parking
-                    Navigator.pushReplacementNamed(context, '/mapscreen');
-                  } else {
-                    // Handle case when dates are not selected
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Error"),
-                          content: Text("Please select both dates."),
-                          actions: [
-                            TextButton(
-                              child: Text("OK"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
+                  validateAndNavigate();
                 },
                 color: Color(0xff00c1ff),
                 elevation: 0,

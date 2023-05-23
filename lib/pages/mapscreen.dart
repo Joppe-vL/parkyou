@@ -209,7 +209,7 @@ class _OpenStreetMapState extends State<OpenStreetMap> {
               child: Builder(
                 builder: (context) => FloatingActionButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/addparkspot');
+                    Navigator.pushReplacementNamed(context, '/reserveparkspot');
                   },
                   child: Icon(Icons.add_road_rounded),
                 ),
