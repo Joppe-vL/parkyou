@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 
 class ChangePassword extends StatefulWidget {
@@ -9,9 +10,36 @@ class ChangePassword extends StatefulWidget {
 class _ChangePasswordState extends State<ChangePassword> {
   bool obscurePassword = true;
   bool obscurePassword_2 = true;
+   bool obscurePassword_3 = true;
 
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController currentPasswordController = TextEditingController();
+
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    try {
+      // Get the current user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Reauthenticate the user with their current password
+        AuthCredential credential =
+            EmailAuthProvider.credential(email: user.email!, password: currentPassword);
+        await user.reauthenticateWithCredential(credential);
+
+        // Change the user's password
+        await user.updatePassword(newPassword);
+
+        print('Password changed successfully');
+      } else {
+        // Handle the case where currentUser is null
+        print('No user is currently logged in.');
+      }
+    } catch (e) {
+      print('Error changing password: $e');
+      // Handle any errors that occur during password change
+    }
+  }
 
   Color buttonColor = Color(0xff00c1ff); // Initialize buttonColor
   @override
@@ -78,7 +106,77 @@ class _ChangePasswordState extends State<ChangePassword> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 30, 0, 16),
                         child: Text(
-                          "Create  New Password",
+                          "Current Password",
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 12,
+                            color: Color(0xff494949),
+                          ),
+                        ),
+                      ),
+                      TextField(
+                        controller: currentPasswordController,
+                        obscureText: obscurePassword,
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 14,
+                          color: Color(0xff000000),
+                        ),
+                        decoration: InputDecoration(
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                            borderSide:
+                                BorderSide(color: Color(0x00000000), width: 1),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                            borderSide:
+                                BorderSide(color: Color(0x00000000), width: 1),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                            borderSide:
+                                BorderSide(color: Color(0x00000000), width: 1),
+                          ),
+                          hintText: "Enter Current Password",
+                          hintStyle: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 12,
+                            color: Color(0xffa4a4a4),
+                          ),
+                          filled: true,
+                          fillColor: Color(0xfff2f2f3),
+                          isDense: false,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          prefixIcon: IconButton(
+                            icon: Icon(
+                                obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Color(0xff000000),
+                                size: 24),
+                            onPressed: () {
+                              // Toggle the password visibility state
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                        child: Text(
+                          "Create New Password",
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.clip,
                           style: TextStyle(
@@ -91,7 +189,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ),
                       TextField(
                         controller: newPasswordController,
-                        obscureText: obscurePassword,
+                        obscureText: obscurePassword_2,
                         textAlign: TextAlign.start,
                         maxLines: 1,
                         style: TextStyle(
@@ -130,7 +228,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           prefixIcon: IconButton(
                             icon: Icon(
-                                obscurePassword
+                                obscurePassword_2
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 color: Color(0xff000000),
@@ -138,7 +236,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             onPressed: () {
                               // Toggle the password visibility state
                               setState(() {
-                                obscurePassword = !obscurePassword;
+                                obscurePassword_2 = !obscurePassword_2;
                               });
                             },
                           ),
@@ -148,7 +246,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         padding:
                             EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                         child: Text(
-                          "Create  Confirm Password",
+                          "Create Confirm Password",
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.clip,
                           style: TextStyle(
@@ -161,7 +259,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ),
                       TextField(
                         controller: confirmPasswordController,
-                        obscureText: obscurePassword_2,
+                        obscureText: obscurePassword_3,
                         textAlign: TextAlign.start,
                         maxLines: 1,
                         style: TextStyle(
@@ -200,7 +298,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           prefixIcon: IconButton(
                             icon: Icon(
-                                obscurePassword_2
+                                obscurePassword_3
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 color: Color(0xff000000),
@@ -208,7 +306,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             onPressed: () {
                               // Toggle the password visibility state
                               setState(() {
-                                obscurePassword_2 = !obscurePassword_2;
+                                obscurePassword_3 = !obscurePassword_3;
                               });
                             },
                           ),
@@ -218,22 +316,33 @@ class _ChangePasswordState extends State<ChangePassword> {
                         padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                         child: Builder(
                           builder: (context) => MaterialButton(
-                            onPressed: () {
-                              // To change the button color to green for 2 seconds
-                              setState(() {
-                                buttonColor = Colors.green;
-                              });
+                            onPressed: () async {
+                              // Get the entered passwords
+                              String currentPassword = currentPasswordController.text;
+                              String newPassword = newPasswordController.text;
+                              String confirmPassword = confirmPasswordController.text;
 
-                              // Wait for 2 seconds
-                              Timer(Duration(seconds: 2), () {
+                              if (newPassword.isNotEmpty && newPassword == confirmPassword) {
+                                // To change the button color to green for 2 seconds
+                                setState(() {
+                                  buttonColor = Colors.green;
+                                });
+
+                                // Wait for 2 seconds
+                                await Future.delayed(Duration(seconds: 2));
+
+                                // Call the changePassword function
+                                await changePassword(currentPassword, newPassword);
+
                                 setState(() {
                                   buttonColor = Color(0xff00c1ff);
                                 });
 
                                 // Redirect to the login screen
-                                Navigator.pushReplacementNamed(
-                                    context, '/accountscreen');
-                              });
+                                Navigator.pushReplacementNamed(context, '/accountscreen');
+                              } else {
+                                // Display an error message or handle password mismatch
+                              }
                             },
                             color: buttonColor,
                             elevation: 0,
