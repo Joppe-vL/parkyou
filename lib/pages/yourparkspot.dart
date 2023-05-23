@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
-class YourParkspot extends StatelessWidget {
+class YourParkspot extends StatefulWidget {
+  @override
+  _YourParkspotState createState() => _YourParkspotState();
+}
+
+class _YourParkspotState extends State<YourParkspot> {
+  bool isCheckboxUnchecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,13 +349,13 @@ class YourParkspot extends StatelessWidget {
                   ),
                 ),
                 Checkbox(
+                  value: isCheckboxUnchecked,
                   onChanged: (value) {},
                   activeColor: Color(0xff3a57e8),
                   autofocus: false,
                   checkColor: Color(0xffffffff),
                   hoverColor: Color(0x42000000),
                   splashRadius: 20,
-                  value: true,
                 ),
               ],
             ),
@@ -401,8 +407,10 @@ class YourParkspot extends StatelessWidget {
                     child: Builder(
                       builder: (context) => MaterialButton(
                         onPressed: () {
-                          Navigator.pushReplacementNamed(
-                              context, '/parkspotsscreen');
+                          if (!isCheckboxUnchecked) {
+                            Navigator.pushReplacementNamed(
+                                context, '/parkspotsscreen');
+                          }
                         },
                         color: Color(0xffff0004),
                         elevation: 0,
