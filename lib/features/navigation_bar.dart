@@ -14,35 +14,35 @@ class NavigationBara extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(
-            icon: Icon(Icons.pageview),
+            icon: Icon(Icons.ballot_rounded),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/removeparkscreen');
             },
             color: destination == '/removeparkscreen' ? Colors.white : null,
           ),
           IconButton(
-            icon: Icon(Icons.pageview),
+            icon: Icon(Icons.local_parking),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/releaseparkscreen');
             },
             color: destination == '/releaseparkscreen' ? Colors.white : null,
           ),
           IconButton(
-            icon: Icon(Icons.pageview),
+            icon: Icon(Icons.map_rounded),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/mapscreen');
             },
             color: destination == '/mapscreen' ? Colors.white : null,
           ),
           IconButton(
-            icon: Icon(Icons.pageview),
+            icon: Icon(Icons.directions_car_filled_rounded),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/vehiclescreen');
             },
             color: destination == '/vehiclescreen' ? Colors.white : null,
           ),
           IconButton(
-            icon: Icon(Icons.pageview),
+            icon: Icon(Icons.account_box),
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/accountscreen');
             },
