@@ -96,6 +96,12 @@ class MyApp extends StatelessWidget {
         return Registerscreen();
       case '/addparkspot':
         return AddParkSpot();
+      case '/parkspotsscreen':
+        return ParkSpotScreen();
+      case '/yourparkspot':
+        return YourParkspot();
+      case '/yourreservedparkspot':
+        return ReservedParkSpot();
       default:
         throw Exception('Invalid route: ${settings.name}');
     }

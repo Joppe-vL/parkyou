@@ -10,6 +10,7 @@ class AddParkSpot extends StatefulWidget {
 
 class _AddParkSpotState extends State<AddParkSpot> {
   String location = '';
+  bool isChecked = false;
 
   @override
   void initState() {
@@ -83,13 +84,17 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   ),
                 ),
                 Checkbox(
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
                   activeColor: Color(0xff3a57e8),
                   autofocus: false,
                   checkColor: Color(0xffffffff),
                   hoverColor: Color(0x42000000),
                   splashRadius: 20,
-                  value: true,
+                  value: isChecked,
                 ),
               ],
             ),

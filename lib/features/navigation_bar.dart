@@ -16,9 +16,9 @@ class NavigationBara extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.ballot_rounded),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/removeparkscreen');
+              Navigator.pushReplacementNamed(context, '/parkspotsscreen');
             },
-            color: destination == '/removeparkscreen' ? Colors.white : null,
+            color: destination == '/parkspotsscreen' ? Colors.white : null,
           ),
           IconButton(
             icon: Icon(Icons.local_parking),

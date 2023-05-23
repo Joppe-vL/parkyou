@@ -11,3 +11,6 @@ export 'package:parkyou/pages/loginscreen.dart';
 export 'package:parkyou/pages/forgotpassword.dart';
 export 'package:parkyou/pages/changepassword.dart';
 export 'package:parkyou/pages/addparkspot.dart';
+export 'package:parkyou/pages/parkspotsscreen.dart';
+export 'package:parkyou/pages/yourparkspot.dart';
+export 'package:parkyou/pages/yourreservedspots.dart';
