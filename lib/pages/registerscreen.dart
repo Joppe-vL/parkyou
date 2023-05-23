@@ -18,7 +18,7 @@ class _RegisterscreenState extends State<Registerscreen> {
   TextEditingController controllerPassword = TextEditingController();
   TextEditingController controllerName = TextEditingController();
 
-  bool obscurePassword = true; 
+  bool obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +243,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                                 await _firestore.collection('Users').doc(userUid).set({
                                   'name': controllerName.text,
                                   'email': controllerMail.text,
-                                });                             
+                                });                   
 
                               setState(() {
                                 buttonColor = Color(0xff00c1ff);

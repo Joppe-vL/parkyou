@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddVehicle extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -192,9 +193,10 @@ class AddVehicle extends StatelessWidget {
                 onPressed: () {
                   String name = _nameController.text;
                   String licensePlate = _licensePlateController.text;
-                  CollectionReference cars =
-                      FirebaseFirestore.instance.collection('cars');
-                  cars.add({
+                  String? userUid = FirebaseAuth.instance.currentUser?.uid;
+                  CollectionReference vehicles = FirebaseFirestore.instance.collection('Users').doc(userUid).collection('Vehicles'); 
+                                        
+                  vehicles.add({
                     'name': name,
                     'licensePlate': licensePlate,
                   }).then((value) {
