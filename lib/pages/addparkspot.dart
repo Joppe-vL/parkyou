@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddParkSpot extends StatefulWidget {
   @override
@@ -88,7 +90,30 @@ class _AddParkSpotState extends State<AddParkSpot> {
   void checkTime() {
     if (selectedTime1 != null && selectedTime2 != null && isCheckboxSelected) {
       if (selectedTime1!.isBefore(selectedTime2!)) {
-        Navigator.pushReplacementNamed(context, '/mapscreen');
+        String? userUid = FirebaseAuth.instance.currentUser?.uid;
+        CollectionReference parkSpots = FirebaseFirestore.instance.collection('Users').doc(userUid).collection('Park_Spots');
+        DateFormat('hh:mm a').format(selectedTime1!);
+        DateFormat('hh:mm a').format(selectedTime2!);
+        DateFormat('dd-MM-yyyy').format(selectedDate1!);
+        DateFormat('dd-MM-yyyy').format(selectedDate2!);
+
+        parkSpots.add({
+          'location': location,
+          'startTime': selectedTime1 != null ? selectedTime1 : 'null',
+          'endTime': selectedTime2 != null ? selectedTime2 : 'null',
+          'startDate': selectedDate1 != null ? selectedDate1 : 'null',
+          //'endDate': selectedDate2 != null ? selectedDate2 : 'null',
+          'isReserved': true,
+          'isParked': false,
+          /*'number_Plate_Parked_Vehicle': 'null',
+          'name_Parked_Vehicle': 'null'*/
+        }).then((value) {
+          Navigator.pushReplacementNamed(context, '/mapscreen');
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed')),
+          );
+        });
       } else {
         showDialog(
           context: context,
@@ -110,7 +135,30 @@ class _AddParkSpotState extends State<AddParkSpot> {
         );
       }
     } else if (!isCheckboxSelected) {
-      Navigator.pushReplacementNamed(context, '/mapscreen');
+      String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      CollectionReference parkSpots = FirebaseFirestore.instance.collection('Users').doc(userUid).collection('Park_Spots');
+      DateFormat('hh:mm a').format(selectedTime1!);
+      DateFormat('hh:mm a').format(selectedTime2!);
+      DateFormat('dd-MM-yyyy').format(selectedDate1!);
+      DateFormat('dd-MM-yyyy').format(selectedDate2!);
+
+      parkSpots.add({
+        'location': location,
+        'startTime': selectedTime1 != null ? selectedTime1 : 'null',
+        'endTime': selectedTime2 != null ? selectedTime2 : 'null',
+        'startDate': selectedDate1 != null ? selectedDate1 : 'null',
+        //'endDate': selectedDate2 != null ? selectedDate2 : 'null',
+        'isReserved': true,
+        'isParked': false,
+        //'number_Plate_Parked_Vehicle': 'null',
+        //'name_Parked_Vehicle': 'null'
+      }).then((value) {
+        Navigator.pushReplacementNamed(context, '/mapscreen');
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed')),
+        );
+      });
     } else {
       showDialog(
         context: context,
