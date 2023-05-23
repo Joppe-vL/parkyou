@@ -7,6 +7,12 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  bool obscurePassword = true;
+  bool obscurePassword_2 = true;
+
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
   Color buttonColor = Color(0xff00c1ff); // Initialize buttonColor
   @override
   Widget build(BuildContext context) {
@@ -84,8 +90,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                       ),
                       TextField(
-                        controller: TextEditingController(),
-                        obscureText: false,
+                        controller: newPasswordController,
+                        obscureText: obscurePassword,
                         textAlign: TextAlign.start,
                         maxLines: 1,
                         style: TextStyle(
@@ -122,8 +128,20 @@ class _ChangePasswordState extends State<ChangePassword> {
                           isDense: false,
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          prefixIcon: Icon(Icons.lock_open,
-                              color: Color(0xff212435), size: 24),
+                          prefixIcon: IconButton(
+                            icon: Icon(
+                                obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Color(0xff000000),
+                                size: 24),
+                            onPressed: () {
+                              // Toggle the password visibility state
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                          ),
                         ),
                       ),
                       Padding(
@@ -142,8 +160,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                       ),
                       TextField(
-                        controller: TextEditingController(),
-                        obscureText: false,
+                        controller: confirmPasswordController,
+                        obscureText: obscurePassword_2,
                         textAlign: TextAlign.start,
                         maxLines: 1,
                         style: TextStyle(
@@ -180,8 +198,20 @@ class _ChangePasswordState extends State<ChangePassword> {
                           isDense: false,
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          prefixIcon: Icon(Icons.lock_open,
-                              color: Color(0xff212435), size: 24),
+                          prefixIcon: IconButton(
+                            icon: Icon(
+                                obscurePassword_2
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Color(0xff000000),
+                                size: 24),
+                            onPressed: () {
+                              // Toggle the password visibility state
+                              setState(() {
+                                obscurePassword_2 = !obscurePassword_2;
+                              });
+                            },
+                          ),
                         ),
                       ),
                       Padding(
