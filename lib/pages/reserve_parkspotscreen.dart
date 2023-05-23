@@ -3,6 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 List<String> rvehicleOptions = [
   "Option 1",
@@ -27,12 +29,18 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
   bool isDate2Error = false;
   Color date2ButtonColor = Color(0xff00c1ff);
   bool isOneDayChecked = false;
+  TextEditingController time1Controller = TextEditingController();
+  TextEditingController time2Controller = TextEditingController();
+  DateTime? selectedTime1;
+  DateTime? selectedTime2;
 
   @override
   void initState() {
     super.initState();
     selectedDate1 = currentDate;
     selectedDate2 = currentDate;
+    time1Controller.text = DateFormat('HH:mm').format(currentDate);
+    time2Controller.text = DateFormat('HH:mm').format(currentDate);
   }
 /*  String location = '';
 
@@ -387,7 +395,25 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        DatePicker.showTimePicker(
+                          context,
+                          showTitleActions: true,
+                          onChanged: (dateTime) {
+                            // Update the selected time in the state
+                            setState(() {
+                              selectedTime1 = dateTime;
+                            });
+                          },
+                          onConfirm: (dateTime) {
+                            // Update the selected time in the state
+                            setState(() {
+                              selectedTime1 = dateTime;
+                            });
+                          },
+                          currentTime: selectedTime1 ?? DateTime.now(),
+                        );
+                      },
                       color: Color(0xff00c1ff),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -396,7 +422,9 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                       ),
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        "Time1",
+                        selectedTime1 != null
+                            ? DateFormat('hh:mm a').format(selectedTime1!)
+                            : 'Select Time',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -428,7 +456,25 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        DatePicker.showTimePicker(
+                          context,
+                          showTitleActions: true,
+                          onChanged: (dateTime) {
+                            // Update the selected time in the state
+                            setState(() {
+                              selectedTime2 = dateTime;
+                            });
+                          },
+                          onConfirm: (dateTime) {
+                            // Update the selected time in the state
+                            setState(() {
+                              selectedTime2 = dateTime;
+                            });
+                          },
+                          currentTime: selectedTime2 ?? DateTime.now(),
+                        );
+                      },
                       color: Color(0xff00c1ff),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -437,7 +483,9 @@ class _ReserveParkSpotState extends State<ReserveParkSpot> {
                       ),
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        "Time2",
+                        selectedTime2 != null
+                            ? DateFormat('hh:mm a').format(selectedTime2!)
+                            : 'Select Time',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

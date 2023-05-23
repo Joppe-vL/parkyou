@@ -27,6 +27,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
   TextEditingController time2Controller = TextEditingController();
   DateTime? selectedTime1;
   DateTime? selectedTime2;
+  bool isCheckboxSelected = false;
 
   @override
   void initState() {
@@ -143,6 +144,9 @@ class _AddParkSpotState extends State<AddParkSpot> {
                       isChecked = value!;
                       isOneDayChecked = value;
                       checkedvisbility = !value;
+                      isCheckboxSelected = value;
+                      selectedTime1 = null;
+                      selectedTime2 = null;
                     });
                   },
                   activeColor: Color(0xff3a57e8),
@@ -235,6 +239,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: MaterialButton(
                       onPressed: () {
+                        if (!isCheckboxSelected) return;
                         DatePicker.showTimePicker(
                           context,
                           showTitleActions: true,
@@ -253,7 +258,8 @@ class _AddParkSpotState extends State<AddParkSpot> {
                           currentTime: selectedTime1 ?? DateTime.now(),
                         );
                       },
-                      color: Color(0xff00c1ff),
+                      color:
+                          isCheckboxSelected ? Color(0xff00c1ff) : Colors.grey,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50.0),
@@ -296,6 +302,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: MaterialButton(
                       onPressed: () {
+                        if (!isCheckboxSelected) return;
                         DatePicker.showTimePicker(
                           context,
                           showTitleActions: true,
@@ -314,7 +321,8 @@ class _AddParkSpotState extends State<AddParkSpot> {
                           currentTime: selectedTime2 ?? DateTime.now(),
                         );
                       },
-                      color: Color(0xff00c1ff),
+                      color:
+                          isCheckboxSelected ? Color(0xff00c1ff) : Colors.grey,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50.0),
