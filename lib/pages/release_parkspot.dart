@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 List<String> bookingOptions = [
   "Option 1",
@@ -13,6 +18,10 @@ class ReleaseParkSpot extends StatefulWidget {
 
 class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
   String selectedOption = "Option 1"; // Unique values
+  TextEditingController time1Controller = TextEditingController();
+  DateTime? selectedTime1;
+  String selectedTime = "Text";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -254,7 +263,7 @@ class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "Text",
+                        selectedTime,
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -269,26 +278,48 @@ class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
-                  child: MaterialButton(
-                    onPressed: () {},
-                    color: Color(0xff00c1ff),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50.0),
-                      side: BorderSide(color: Color(0xff000000), width: 1),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      "Pick Time",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
+                  child: GestureDetector(
+                    child: MaterialButton(
+                      onPressed: () {
+                        DatePicker.showTimePicker(
+                          context,
+                          showTitleActions: true,
+                          onChanged: (dateTime) {
+                            setState(() {
+                              selectedTime1 = dateTime;
+                              selectedTime =
+                                  DateFormat('hh:mm a').format(dateTime);
+                            });
+                          },
+                          onConfirm: (dateTime) {
+                            setState(() {
+                              selectedTime1 = dateTime;
+                              selectedTime =
+                                  DateFormat('hh:mm a').format(dateTime);
+                            });
+                          },
+                          currentTime: selectedTime1 ?? DateTime.now(),
+                        );
+                      },
+                      color: Color(0xff00c1ff),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50.0),
+                        side: BorderSide(color: Color(0xff000000), width: 1),
                       ),
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        "Pick Time",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                      textColor: Color(0xff000000),
+                      height: 40,
+                      minWidth: 90,
                     ),
-                    textColor: Color(0xff000000),
-                    height: 40,
-                    minWidth: 90,
                   ),
                 ),
               ],

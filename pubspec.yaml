@@ -45,6 +45,7 @@ dependencies:
   flutter_map_tile_caching: ^4.0.1
   geolocator: ^9.0.2
   http: ^0.13.4
+  flutter_datetime_picker: ^1.5.1
 
 dev_dependencies:
   flutter_test:
