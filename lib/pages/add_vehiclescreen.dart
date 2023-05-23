@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddVehicle extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _licensePlateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +62,7 @@ class AddVehicle extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                     child: TextField(
-                      controller: TextEditingController(),
+                      controller: _nameController,
                       obscureText: false,
                       textAlign: TextAlign.start,
                       maxLines: 1,
@@ -138,7 +141,7 @@ class AddVehicle extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: _licensePlateController,
                     obscureText: false,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -187,7 +190,24 @@ class AddVehicle extends StatelessWidget {
             child: Builder(
               builder: (context) => MaterialButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/vehiclescreen');
+                  String name = _nameController.text;
+                  String licensePlate = _licensePlateController.text;
+                  // Create a reference to the Firestore collection
+                  CollectionReference cars =
+                      FirebaseFirestore.instance.collection('cars');
+                  // Add the vehicle data to Firestore
+                  cars.add({
+                    'name': name,
+                    'licensePlate': licensePlate,
+                  }).then((value) {
+                    // Vehicle data added successfully
+                    Navigator.pushReplacementNamed(context, '/vehiclescreen');
+                  }).catchError((error) {
+                    // Error occurred while adding vehicle data
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to add vehicle')),
+                    );
+                  });
                 },
                 color: Color(0xff00c1ff),
                 elevation: 0,
