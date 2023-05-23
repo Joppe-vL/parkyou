@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountScreen extends StatelessWidget {
+  Future<String> getUsernameFromFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null){
+      final usersCollection = FirebaseFirestore.instance.collection('Users');
+      final userDoc = await usersCollection.doc(user.uid).get();
+      final username = userDoc['name'] as String;
+      return username;
+    } else {
+      // User is not logged in or authentication failed
+      return 'Not logged in or failed';
+    }    
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,16 +83,31 @@ class AccountScreen extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
-                      child: Text(
-                        "The_Username",
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14,
-                          color: Color(0xff000000),
-                        ),
+                      child: FutureBuilder<String>(
+                        future: getUsernameFromFirestore(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            // While waiting for the data to load, show a loading indicator.
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            // If an error occurs while fetching the data, display an error message.
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            // Once the data is loaded, display the username in the Text widget.
+                            final username = snapshot.data;
+                            return Text(
+                              username ?? 'Username not found',
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 14,
+                                color: Color(0xff000000),
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),
