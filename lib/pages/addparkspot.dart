@@ -16,11 +16,18 @@ class _AddParkSpotState extends State<AddParkSpot> {
   DateTime currentDate = DateTime.now();
   DateTime? selectedDate1;
   DateTime? selectedDate2;
+  TextEditingController date1Controller = TextEditingController();
+  TextEditingController date2Controller = TextEditingController();
+  bool isDate2Error = false;
+  Color date2ButtonColor = Color(0xff00c1ff);
+  bool isOneDayChecked = false;
 
   @override
   void initState() {
     super.initState();
     fetchLocation();
+    selectedDate1 = currentDate;
+    selectedDate2 = currentDate;
   }
 
   Future<void> fetchLocation() async {
@@ -36,7 +43,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
     final picked = await showDatePicker(
       context: context,
       initialDate: currentDate,
-      firstDate: DateTime.now(),
+      firstDate: currentDate,
       lastDate: DateTime(2100),
     );
 
@@ -50,14 +57,21 @@ class _AddParkSpotState extends State<AddParkSpot> {
   Future<void> selectDate2(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate2 ?? currentDate,
+      initialDate: currentDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
     if (picked != null && picked != selectedDate2) {
       setState(() {
-        selectedDate2 = picked;
+        selectedDate2 = isOneDayChecked ? null : picked;
+        if (selectedDate1 != null && selectedDate2 != null) {
+          if (selectedDate2!.isBefore(selectedDate1!)) {
+            date2ButtonColor = Color(0xffff0004);
+          } else {
+            date2ButtonColor = Color(0xff00c1ff);
+          }
+        }
       });
     }
   }
@@ -73,10 +87,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-            child:
-
-                ///***If you have exported images you must have to copy those images in assets/images directory.
-                Image(
+            child: Image(
               image: AssetImage("assets/images/Bigger.png"),
               height: 100,
               width: 140,
@@ -122,6 +133,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   onChanged: (value) {
                     setState(() {
                       isChecked = value!;
+                      isOneDayChecked = value;
                       checkedvisbility = !value;
                     });
                   },
@@ -315,7 +327,9 @@ class _AddParkSpotState extends State<AddParkSpot> {
                       ),
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        DateFormat('dd-MM-yyyy').format(currentDate),
+                        selectedDate1 != null
+                            ? DateFormat('dd-MM-yyyy').format(selectedDate1!)
+                            : DateFormat('dd-MM-yyyy').format(currentDate),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -353,7 +367,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                       padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: MaterialButton(
                         onPressed: () => selectDate2(context),
-                        color: Color(0xff00c1ff),
+                        color: date2ButtonColor,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0),
@@ -361,7 +375,12 @@ class _AddParkSpotState extends State<AddParkSpot> {
                         ),
                         padding: EdgeInsets.all(16),
                         child: Text(
-                          "Date2",
+                          selectedDate2 != null
+                              ? DateFormat('dd-MM-yyyy').format(selectedDate2!)
+                              : isOneDayChecked
+                                  ? 'N/A'
+                                  : DateFormat('dd-MM-yyyy')
+                                      .format(currentDate),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
@@ -383,7 +402,55 @@ class _AddParkSpotState extends State<AddParkSpot> {
             child: Builder(
               builder: (context) => MaterialButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/mapscreen');
+                  if (selectedDate1 != null &&
+                      selectedDate2 != null &&
+                      !isOneDayChecked) {
+                    if (selectedDate2!.isBefore(selectedDate1!)) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("Invalid date selection."),
+                            content: Text(
+                                "End date cannot be earlier than start date."),
+                            actions: [
+                              TextButton(
+                                child: Text("OK"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      Navigator.pushReplacementNamed(context, '/mapscreen');
+                    }
+                  } else if (selectedDate1 != null && isOneDayChecked) {
+                    selectedDate2 =
+                        null; // Set selectedDate2 to null for one-day parking
+                    Navigator.pushReplacementNamed(context, '/mapscreen');
+                  } else {
+                    // Handle case when dates are not selected
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Error"),
+                          content: Text("Please select both dates."),
+                          actions: [
+                            TextButton(
+                              child: Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 color: Color(0xff00c1ff),
                 elevation: 0,
