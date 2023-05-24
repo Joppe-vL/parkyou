@@ -107,7 +107,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
           'number_Plate_Parked_Vehicle': null,
           'name_Parked_Vehicle': null
         }).then((value) {
-          Navigator.pushReplacementNamed(context, '/dumper');
+          Navigator.pushReplacementNamed(context, '/mapscreen');
         });
       } else {
         showDialog(
@@ -137,15 +137,15 @@ class _AddParkSpotState extends State<AddParkSpot> {
           .collection('Park_Spots');
       String thetime = DateFormat('hh:mm a').format(selectedTime1!);
       String thetime2 = DateFormat('hh:mm a').format(selectedTime2!);
-      String thedate = DateFormat('dd-MM-yyyy').format(selectedDate1!);
-      String thedate2 = DateFormat('dd-MM-yyyy').format(selectedDate2!);
+      //String thedate = DateFormat('dd-MM-yyyy').format(selectedDate1!);
+      //String thedate2 = DateFormat('dd-MM-yyyy').format(selectedDate2!);
 
       parkSpots.add({
         'location': location,
         'startTime': null,
         'endTime': null,
-        'startDate': thedate,
-        'endDate': thedate2,
+        'startDate': selectedDate1,
+        'endDate': selectedDate2,
         'isReserved': false,
         'isParked': false,
         'number_Plate_Parked_Vehicle': null,
