@@ -7,48 +7,35 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-List<String> bbookingOptions = []; // Initialize as an empty list
-
 class ReleaseParkSpot extends StatefulWidget {
   @override
   _ReleaseParkSpotState createState() => _ReleaseParkSpotState();
 }
 
 class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
-  List<String> bookingOptions = [
-    'No Bookings'
-  ]; // Initialize with a default option
-  String selectedOption = 'No Bookings';
-  String selectedOptionId = '';
-
-  Future<void> getBookingOptions() async {
+  Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final String? userUid = FirebaseAuth.instance.currentUser?.uid;
-      final CollectionReference vehiclesCollection = FirebaseFirestore.instance
+      final CollectionReference ParkSpotCollection = FirebaseFirestore.instance
           .collection('Users')
           .doc(userUid)
           .collection('Park_Spots');
 
-      final QuerySnapshot snapshot = await vehiclesCollection.get();
-      final List<String> options = snapshot.docs
-          .map((doc) =>
-              (doc.data() as Map<String, dynamic>)['location'] as String)
-          .toList();
-      setState(() {
-        bookingOptions = options.isNotEmpty ? options : ['No Bookings'];
-        selectedOption = bookingOptions.contains(selectedOption)
-            ? selectedOption
-            : bookingOptions[0];
-      });
+      final QuerySnapshot snapshot = await ParkSpotCollection.get();
+      final List<Map<String, dynamic>> options = snapshot.docs.map((doc) {
+        final docId = doc.id;
+        final location =
+            (doc.data() as Map<String, dynamic>)['location'] as String;
+        return {
+          'docId': docId,
+          'location': location,
+        };
+      }).toList();
+      return options;
     } catch (e) {
-      print('Error fetching vehicle options: $e');
+      print('Error fetching location options: $e');
+      return [];
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getBookingOptions();
   }
 
   TextEditingController time1Controller = TextEditingController();
@@ -57,114 +44,43 @@ class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xfff0d3ff),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-            child: Image(
-              image: AssetImage("assets/images/Bigger.png"),
-              height: 100,
-              width: 140,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-            child: Text(
-              "Release parking spot",
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.clip,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                fontStyle: FontStyle.normal,
-                fontSize: 20,
-                color: Color(0xff000000),
+    return Builder(builder: (context) {
+      return Scaffold(
+        backgroundColor: Color(0xfff0d3ff),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+              child: Image(
+                image: AssetImage("assets/images/Bigger.png"),
+                height: 100,
+                width: 140,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 40, 0, 40),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Booking:",
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                      child: Container(
-                        width: 130,
-                        height: 50,
-                        padding:
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: Color(0xffffffff),
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        child: DropdownButton(
-                          value: selectedOption,
-                          items: bookingOptions.map((option) {
-                            return DropdownMenuItem(
-                              value: option,
-                              child: Text(option),
-                            );
-                          }).toList(),
-                          style: TextStyle(
-                            color: Color(0xff000000),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedOption = value.toString();
-                            });
-                          },
-                          elevation: 8,
-                          isExpanded: true,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+              child: Text(
+                "ReleaseParkSpot",
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 20,
+                  color: Color(0xff000000),
+                ),
               ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 10, 0, 5),
+              child: Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
-                  "Location:",
+                  "Your bookings:",
                   textAlign: TextAlign.start,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
@@ -175,219 +91,96 @@ class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
                   ),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 0, 10, 0),
-                  padding: EdgeInsets.zero,
-                  width: 200,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Color(0x1f000000),
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.zero,
-                    border: Border.all(color: Color(0x4d9e9e9e), width: 1),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
-                    child: Text(
-                      "FillLocation",
-                      textAlign: TextAlign.start,
-                      overflow: TextOverflow.clip,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14,
-                        color: Color(0xff000000),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text(
-                    "Vehicle:",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(12, 0, 8, 0),
-                    padding: EdgeInsets.zero,
-                    width: 200,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Color(0x1f000000),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(color: Color(0x4d9e9e9e), width: 1),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
-                      child: Text(
-                        "FillVehicle",
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14,
-                          color: Color(0xff000000),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text(
-                    "Time:",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(25, 0, 0, 0),
-                    padding: EdgeInsets.zero,
-                    width: 80,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Color(0x1f000000),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(color: Color(0x4d9e9e9e), width: 1),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
-                      child: Text(
-                        selectedTime,
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14,
-                          color: Color(0xff000000),
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: fetchLocations(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final locations = snapshot.data!;
+                    return Container(
+                      height: 180,
+                      child: Material(
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: locations.length,
+                          itemBuilder: (context, index) {
+                            final name = locations[index]['location'];
+                            final docId = locations[index]['docId'];
+
+                            return Builder(
+                              builder: (context) => GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/releasechoice',
+                                    arguments: {
+                                      'docId': docId,
+                                    },
+                                  );
+                                },
+                                child: ListTile(
+                                  tileColor: Color(0xffffffff),
+                                  title: Text(
+                                    "Location: $name",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 14,
+                                      color: Color(0xff000000),
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  subtitle: Text(
+                                    "",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 14,
+                                      color: Color(0xff000000),
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  dense: true,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  selected: false,
+                                  selectedTileColor: Color(0x42000000),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                    side: BorderSide(
+                                        color: Color(0x7f9e9e9e), width: 1),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 30, 0),
-                  child: GestureDetector(
-                    child: MaterialButton(
-                      onPressed: () {
-                        DatePicker.showTimePicker(
-                          context,
-                          showTitleActions: true,
-                          onChanged: (dateTime) {
-                            setState(() {
-                              selectedTime1 = dateTime;
-                              selectedTime =
-                                  DateFormat('hh:mm a').format(dateTime);
-                            });
-                          },
-                          onConfirm: (dateTime) {
-                            setState(() {
-                              selectedTime1 = dateTime;
-                              selectedTime =
-                                  DateFormat('hh:mm a').format(dateTime);
-                            });
-                          },
-                          currentTime: selectedTime1 ?? DateTime.now(),
-                        );
-                      },
-                      color: Color(0xff00c1ff),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50.0),
-                        side: BorderSide(color: Color(0xff000000), width: 1),
-                      ),
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        "Pick Time",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
-                      textColor: Color(0xff000000),
-                      height: 40,
-                      minWidth: 90,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: Builder(
-              builder: (context) => MaterialButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/releaseparkscreen');
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  }
+                  return CircularProgressIndicator();
                 },
-                color: Color(0xff00c1ff),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  side: BorderSide(color: Color(0xff000000), width: 1),
-                ),
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  "Release",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    fontStyle: FontStyle.normal,
-                  ),
-                ),
-                textColor: Color(0xff000000),
-                height: 40,
-                minWidth: 140,
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

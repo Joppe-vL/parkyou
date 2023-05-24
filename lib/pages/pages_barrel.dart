@@ -15,3 +15,4 @@ export 'package:parkyou/pages/parkspotsscreen.dart';
 export 'package:parkyou/pages/yourparkspot.dart';
 export 'package:parkyou/pages/yourreservedspots.dart';
 export 'package:parkyou/pages/dumper.dart';
+export 'package:parkyou/pages/release_choice.dart';

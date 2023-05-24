@@ -110,6 +110,10 @@ class MyApp extends StatelessWidget {
         return ReservedParkSpot(docId: docId);
       case '/dumper':
         return Errorscreen();
+      case '/releasechoice':
+        final args = settings.arguments as Map<String, dynamic>;
+        final docId = args['docId'] as String;
+        return Releasechoice(docId: docId);
       default:
         throw Exception('Invalid route: ${settings.name}');
     }
