@@ -1,13 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:parkyou/pages/vehiclescreen.dart';
 import 'package:parkyou/features/navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditVehicle extends StatefulWidget {
+  final String docId;
+
+  EditVehicle({required this.docId});
   @override
   _EditVehicleState createState() => _EditVehicleState();
 }
 
 class _EditVehicleState extends State<EditVehicle> {
+  String licensePlateNumber = '';
+
+  Future<void> removeVehicle() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final DocumentReference vehicleRef = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Vehicles')
+          .doc(widget.docId);
+
+      await vehicleRef.delete();
+      print('Vehicle removed successfully');
+    } catch (e) {
+      print('Error removing vehicle: $e');
+    }
+  }
+
+  Future<void> updateVehicleName(String name) async {
+    if (name.isEmpty) {
+      print('Name cannot be empty');
+      return;
+    }
+
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final DocumentReference vehicleRef = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Vehicles')
+          .doc(widget.docId);
+
+      await vehicleRef.update({'name': name});
+      print('Vehicle name updated successfully');
+    } catch (e) {
+      print('Error updating vehicle name: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getLicensePlateNumber();
+  }
+
+  Future<void> getLicensePlateNumber() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final DocumentSnapshot vehicleSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Vehicles')
+          .doc(widget.docId)
+          .get();
+
+      if (vehicleSnapshot.exists) {
+        final Map<String, dynamic>? vehicleData = vehicleSnapshot.data()
+            as Map<String, dynamic>?; // Add the cast here
+        if (vehicleData != null && vehicleData.containsKey('licensePlate')) {
+          setState(() {
+            licensePlateNumber = vehicleData['licensePlate']
+                as String; // Cast the value as String
+          });
+        }
+      }
+    } catch (e) {
+      print('Error retrieving license plate number: $e');
+    }
+  }
+
+  TextEditingController nameController = TextEditingController();
+  String newName = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +144,12 @@ class _EditVehicleState extends State<EditVehicle> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                     child: TextField(
-                      controller: TextEditingController(),
+                      controller: nameController,
+                      onChanged: (value) {
+                        setState(() {
+                          newName = value;
+                        });
+                      },
                       obscureText: false,
                       textAlign: TextAlign.start,
                       maxLines: 1,
@@ -156,7 +239,7 @@ class _EditVehicleState extends State<EditVehicle> {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                     child: Text(
-                      "Lic_Plat_Number",
+                      "$licensePlateNumber",
                       textAlign: TextAlign.start,
                       overflow: TextOverflow.clip,
                       style: TextStyle(
@@ -185,6 +268,7 @@ class _EditVehicleState extends State<EditVehicle> {
                     child: Builder(
                       builder: (context) => MaterialButton(
                         onPressed: () {
+                          removeVehicle();
                           Navigator.pushReplacementNamed(
                               context, '/vehiclescreen');
                         },
@@ -217,6 +301,8 @@ class _EditVehicleState extends State<EditVehicle> {
                     child: Builder(
                       builder: (context) => MaterialButton(
                         onPressed: () {
+                          String newName = nameController.text.trim();
+                          updateVehicleName(newName);
                           Navigator.pushReplacementNamed(
                               context, '/vehiclescreen');
                         },

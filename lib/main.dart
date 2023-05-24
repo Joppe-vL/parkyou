@@ -81,7 +81,9 @@ class MyApp extends StatelessWidget {
       case '/accountscreen':
         return AccountScreen();
       case '/edit_vehiclescreen':
-        return EditVehicle();
+        final args = settings.arguments as Map<String, dynamic>;
+        final docId = args['docId'] as String;
+        return EditVehicle(docId: docId);
       case '/addvehicle':
         return AddVehicle();
       case '/reserveparkspot':

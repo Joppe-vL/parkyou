@@ -1,209 +1,196 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:parkyou/pages/yourparkspot.dart';
 
-List<String> vvehicleOptions = []; // Initialize as an empty list
-
-class VehicleScreen extends StatefulWidget {
-  @override
-  _VehicleScreenState createState() => _VehicleScreenState();
-}
-
-class _VehicleScreenState extends State<VehicleScreen> {
-  List<String> vvehicleOptions = [
-    'No vehicles'
-  ]; // Initialize with a default option
-  String selectedOption = 'No vehicles';
-  String selectedOptionId = '';
-
-  Future<void> getVehicleOptions() async {
+class VehicleScreen extends StatelessWidget {
+  Future<List<Map<String, dynamic>>> fetchLocations() async {
     try {
       final String? userUid = FirebaseAuth.instance.currentUser?.uid;
-      final CollectionReference vehiclesCollection = FirebaseFirestore.instance
+      final CollectionReference ParkSpotCollection = FirebaseFirestore.instance
           .collection('Users')
           .doc(userUid)
           .collection('Vehicles');
 
-      final QuerySnapshot snapshot = await vehiclesCollection.get();
-      final List<String> options = snapshot.docs
-          .map((doc) => (doc.data() as Map<String, dynamic>)['name'] as String)
-          .toList();
-      setState(() {
-        vvehicleOptions = options.isNotEmpty ? options : ['No vehicles'];
-        selectedOption = vvehicleOptions.contains(selectedOption)
-            ? selectedOption
-            : vvehicleOptions[0];
-      });
+      final QuerySnapshot snapshot = await ParkSpotCollection.get();
+      final List<Map<String, dynamic>> options = snapshot.docs.map((doc) {
+        final docId = doc.id;
+        final name = (doc.data() as Map<String, dynamic>)['name'] as String;
+        final licensePlate =
+            (doc.data() as Map<String, dynamic>)['licensePlate'] as String;
+        return {
+          'docId': docId,
+          'name': name,
+          'licensePlate': licensePlate,
+        };
+      }).toList();
+      return options;
     } catch (e) {
-      print('Error fetching vehicle options: $e');
+      print('Error fetching location options: $e');
+      return [];
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    getVehicleOptions();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xfff0d3ff),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-            child: Image(
-              image: AssetImage("assets/images/Bigger.png"),
-              height: 100,
-              width: 140,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-            child: Text(
-              "Vehicles",
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.clip,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                fontStyle: FontStyle.normal,
-                fontSize: 20,
-                color: Color(0xff000000),
+    return Builder(builder: (context) {
+      return Scaffold(
+        backgroundColor: Color(0xfff0d3ff),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+              child: Image(
+                image: AssetImage("assets/images/Bigger.png"),
+                height: 100,
+                width: 140,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text(
-                    "Vehicle:",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff000000),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    child: Container(
-                      width: 130,
-                      height: 50,
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Color(0xffffffff),
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: DropdownButton(
-                        value: selectedOption,
-                        items: vvehicleOptions.map((option) {
-                          return DropdownMenuItem(
-                            value: option,
-                            child: Text(option),
-                          );
-                        }).toList(),
-                        style: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedOption = value.toString();
-                          });
-                        },
-                        elevation: 8,
-                        isExpanded: true,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(170, 20, 10, 0),
-                child: Builder(
-                  builder: (context) => MaterialButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(
-                          context, '/edit_vehiclescreen');
-                    },
-                    color: Color(0xff00c1ff),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      side: BorderSide(color: Color(0xff000000), width: 1),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      "Edit Vehicle",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        fontStyle: FontStyle.normal,
-                      ),
-                    ),
-                    textColor: Color(0xff000000),
-                    height: 40,
-                    minWidth: 120,
-                  ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+              child: Text(
+                "Park Spots",
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 20,
+                  color: Color(0xff000000),
                 ),
               ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-            child: Builder(
-              builder: (context) => MaterialButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/addvehicle');
-                },
-                color: Color(0xff00c1ff),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
-                  side: BorderSide(color: Color(0xff000000), width: 1),
-                ),
-                padding: EdgeInsets.all(16),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 10, 0, 5),
+              child: Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
-                  "Add New Vehicle",
+                  "Your park spots:",
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.clip,
                   style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w400,
                     fontStyle: FontStyle.normal,
+                    fontSize: 14,
+                    color: Color(0xff000000),
                   ),
                 ),
-                textColor: Color(0xff000000),
-                height: 40,
-                minWidth: 140,
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: fetchLocations(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final locations = snapshot.data!;
+                    return Container(
+                      height: 180,
+                      child: Material(
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: locations.length,
+                          itemBuilder: (context, index) {
+                            final name = locations[index]['name'];
+                            final docId = locations[index]['docId'];
+                            final licensePlate =
+                                locations[index]['licensePlate'];
+
+                            return Builder(
+                              builder: (context) => GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/edit_vehiclescreen',
+                                    arguments: {
+                                      'docId': docId,
+                                    },
+                                  );
+                                },
+                                child: ListTile(
+                                  tileColor: Color(0xffffffff),
+                                  title: Text(
+                                    "Vehicle Name: $name",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 14,
+                                      color: Color(0xff000000),
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  subtitle: Text(
+                                    "License Plate: $licensePlate",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 14,
+                                      color: Color(0xff000000),
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  dense: true,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  selected: false,
+                                  selectedTileColor: Color(0x42000000),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                    side: BorderSide(
+                                        color: Color(0x7f9e9e9e), width: 1),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 50, 0, 50),
+              child: Builder(
+                builder: (context) => MaterialButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/addvehicle');
+                  },
+                  color: Color(0xff00c1ff),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50.0),
+                    side: BorderSide(color: Color(0xff000000), width: 1),
+                  ),
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                    "Add New Vehicle",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                  textColor: Color(0xff000000),
+                  height: 40,
+                  minWidth: 140,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
