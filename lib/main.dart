@@ -99,7 +99,9 @@ class MyApp extends StatelessWidget {
       case '/parkspotsscreen':
         return ParkSpotScreen();
       case '/yourparkspot':
-        return YourParkspot();
+        final args = settings.arguments as Map<String, dynamic>;
+        final docId = args['docId'] as String;
+        return YourParkspot(docId: docId);
       case '/yourreservedparkspot':
         return ReservedParkSpot();
       case '/dumper':

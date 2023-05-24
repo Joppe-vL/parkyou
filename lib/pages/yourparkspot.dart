@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class YourParkspot extends StatefulWidget {
+  final String docId; // Add the docId parameter
+
+  YourParkspot({required this.docId}); // Update the constructor
   @override
   _YourParkspotState createState() => _YourParkspotState();
 }
@@ -76,7 +79,7 @@ class _YourParkspotState extends State<YourParkspot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "FillLocation",
+                        widget.docId,
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
