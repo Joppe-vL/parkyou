@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class ReservedParkSpot extends StatefulWidget {
+  final String docId; // Add the docId parameter
+
+  ReservedParkSpot({required this.docId}); // Update the constructor
   @override
   _ReservedParkSpotState createState() => _ReservedParkSpotState();
 }
 
 class _ReservedParkSpotState extends State<ReservedParkSpot> {
+  String location = '';
+  String startDate = '';
+  String endDateValue = '';
+  String startTimeValue = '';
+  String endTimeValue = '';
+  //String vehicleNameValue = '';
   String? _parkedValue;
 
   void _handleParkedValueChanged(String? value) {
@@ -13,6 +25,89 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
       _parkedValue = value;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLocation();
+    /*getVehicleOptions();*/
+  }
+
+  Future<void> fetchLocation() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Park_Spots')
+          .doc(widget.docId)
+          .get();
+
+      if (docSnapshot.exists) {
+        location = docSnapshot.get('location');
+        final Timestamp startDateTimestamp = docSnapshot.get('startDate');
+        final Timestamp? endDateTimestamp = docSnapshot.get('endDate');
+        final startTime = docSnapshot.get('startTime');
+        final endTime = docSnapshot.get('endTime');
+        final isparked = docSnapshot.get('isParked');
+        final isReserved = docSnapshot.get('isReserved');
+
+        final DateFormat dateFormatter = DateFormat('dd-MM-yyyy');
+        startDate = startDateTimestamp != null
+            ? dateFormatter.format(startDateTimestamp.toDate())
+            : 'No start date';
+
+        startDate = dateFormatter.format(startDateTimestamp.toDate());
+
+        setState(() {
+          location = location;
+          startDate = startDate;
+          startTimeValue = startTime ?? 'No start time';
+          endTimeValue = endTime ?? 'none';
+        });
+
+        // Check if endDateTimestamp is null
+        if (endDateTimestamp != null) {
+          // Convert the endDate timestamp to the desired format
+          final String endDate =
+              dateFormatter.format(endDateTimestamp.toDate());
+
+          setState(() {
+            // Update the UI with the fetched endDate
+            // If endDate is null, it will display an empty string
+            // Otherwise, it will display the formatted endDate
+            endDateValue = endDate;
+          });
+        } else {
+          setState(() {
+            // Update the UI with an empty string for endDate
+            endDateValue = 'One Day';
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching location: $e');
+    }
+  }
+
+  /*Future<void> getVehicleOptions() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final CollectionReference vehiclesCollection = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Vehicles');
+      final QuerySnapshot vehicleSnapshot = await vehiclesCollection.get();
+      if (vehicleSnapshot.exists) {
+        final licensePlate = vehicleSnapshot.get('licensePlate');
+        setState(() {
+          licensePlateValue = licensePlate;
+        });
+      }
+    } catch (e) {
+      print('Error fetching license plate options: $e');
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +178,7 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "FillLocation",
+                        "$location",
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -146,7 +241,7 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "Vehicle",
+                        "vehicleNameValue",
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -204,7 +299,7 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(
-                            "Time1",
+                            "$startTimeValue",
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
@@ -230,7 +325,7 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
                             ),
                           ),
                           Text(
-                            "Time2",
+                            "$endTimeValue",
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
@@ -290,7 +385,7 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(
-                            "Date1",
+                            "$startDate",
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
@@ -316,7 +411,7 @@ class _ReservedParkSpotState extends State<ReservedParkSpot> {
                             ),
                           ),
                           Text(
-                            "Date2",
+                            "$endTimeValue",
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.clip,
                             style: TextStyle(

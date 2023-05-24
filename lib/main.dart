@@ -103,7 +103,9 @@ class MyApp extends StatelessWidget {
         final docId = args['docId'] as String;
         return YourParkspot(docId: docId);
       case '/yourreservedparkspot':
-        return ReservedParkSpot();
+        final args = settings.arguments as Map<String, dynamic>;
+        final docId = args['docId'] as String;
+        return ReservedParkSpot(docId: docId);
       case '/dumper':
         return Errorscreen();
       default:
