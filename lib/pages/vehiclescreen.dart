@@ -53,7 +53,7 @@ class VehicleScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
               child: Text(
-                "Park Spots",
+                "Vehicles",
                 textAlign: TextAlign.start,
                 overflow: TextOverflow.clip,
                 style: TextStyle(
