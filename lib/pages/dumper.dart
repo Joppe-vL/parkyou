@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Errorscreen extends StatefulWidget {
   @override
@@ -26,17 +29,58 @@ class _ErrorscreenState extends State<Errorscreen> {
   }
 
   void checkTime() {
-    if (selectedTime1 != null && selectedTime2 != null && isCheckboxSelected) {
-      if (selectedTime1!.isBefore(selectedTime2!)) {
-        Navigator.pushReplacementNamed(context, '/mapscreen');
+    if (isCheckboxSelected) {
+      if (selectedTime1 != null && selectedTime2 != null) {
+        if (selectedTime1!.isBefore(selectedTime2!)) {
+          String? userUid = FirebaseAuth.instance.currentUser?.uid;
+          CollectionReference parkSpots = FirebaseFirestore.instance
+              .collection('Users')
+              .doc(userUid)
+              .collection('Park_Spots');
+          String thedate = DateFormat('hh:mm a').format(selectedTime1!);
+          String thedate2 = DateFormat('hh:mm a').format(selectedTime2!);
+
+          parkSpots.add({
+            'startTime': thedate,
+            'endTime': thedate2,
+            'isReserved': true,
+            'isParked': false,
+            'number_Plate_Parked_Vehicle': null,
+            'name_Parked_Vehicle': null,
+          }).then((value) {
+            Navigator.pushReplacementNamed(context, '/mapscreen');
+          }).catchError((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed')),
+            );
+          });
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Invalid Time'),
+                content:
+                    Text('The start time must be earlier than the end time.'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } else {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Invalid Time'),
-              content:
-                  Text('The start time must be earlier than the end time.'),
+              content: Text('Please select both start and end times.'),
               actions: [
                 TextButton(
                   child: Text('OK'),
@@ -49,26 +93,27 @@ class _ErrorscreenState extends State<Errorscreen> {
           },
         );
       }
-    } else if (!isCheckboxSelected) {
-      Navigator.pushReplacementNamed(context, '/mapscreen');
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Invalid Time'),
-            content: Text('Please select both start and end times.'),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      CollectionReference parkSpots = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Park_Spots');
+
+      parkSpots.add({
+        'startTime': null,
+        'endTime': null,
+        'isReserved': true,
+        'isParked': false,
+        'number_Plate_Parked_Vehicle': null,
+        'name_Parked_Vehicle': null,
+      }).then((value) {
+        Navigator.pushReplacementNamed(context, '/mapscreen');
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed')),
+        );
+      });
     }
   }
 

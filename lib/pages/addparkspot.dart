@@ -15,20 +15,17 @@ class AddParkSpot extends StatefulWidget {
 
 class _AddParkSpotState extends State<AddParkSpot> {
   String location = '';
-  bool isChecked = false;
-  bool checkedvisbility = true;
   DateTime currentDate = DateTime.now();
-  DateTime? selectedDate1;
-  DateTime? selectedDate2;
+  DateTime? selectedDate1 = DateTime.now();
+  DateTime? selectedDate2 = DateTime.now();
   TextEditingController date1Controller = TextEditingController();
   TextEditingController date2Controller = TextEditingController();
   bool isDate2Error = false;
   Color date2ButtonColor = Color(0xff00c1ff);
-  bool isOneDayChecked = false;
   TextEditingController time1Controller = TextEditingController();
   TextEditingController time2Controller = TextEditingController();
-  DateTime? selectedTime1;
-  DateTime? selectedTime2;
+  DateTime? selectedTime1 = DateTime.now();
+  DateTime? selectedTime2 = DateTime.now();
   bool isCheckboxSelected = false;
 
   @override
@@ -75,7 +72,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
 
     if (picked != null && picked != selectedDate2) {
       setState(() {
-        selectedDate2 = isOneDayChecked ? null : picked;
+        selectedDate2 = isCheckboxSelected ? null : picked;
         if (selectedDate1 != null && selectedDate2 != null) {
           if (selectedDate2!.isBefore(selectedDate1!)) {
             date2ButtonColor = Color(0xffff0004);
@@ -91,28 +88,26 @@ class _AddParkSpotState extends State<AddParkSpot> {
     if (selectedTime1 != null && selectedTime2 != null && isCheckboxSelected) {
       if (selectedTime1!.isBefore(selectedTime2!)) {
         String? userUid = FirebaseAuth.instance.currentUser?.uid;
-        CollectionReference parkSpots = FirebaseFirestore.instance.collection('Users').doc(userUid).collection('Park_Spots');
-        DateFormat('hh:mm a').format(selectedTime1!);
-        DateFormat('hh:mm a').format(selectedTime2!);
-        DateFormat('dd-MM-yyyy').format(selectedDate1!);
-        DateFormat('dd-MM-yyyy').format(selectedDate2!);
-
+        CollectionReference parkSpots = FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userUid)
+            .collection('Park_Spots');
+        String thetime = DateFormat('hh:mm a').format(selectedTime1!);
+        String thetime2 = DateFormat('hh:mm a').format(selectedTime2!);
+        //String thedate = DateFormat('dd-MM-yyyy').format(selectedDate1!); This makes the whole code crash
+        //String thedate2 = DateFormat('dd-MM-yyyy').format(selectedDate2!); This makes the whole code crash
         parkSpots.add({
           'location': location,
-          'startTime': selectedTime1 != null ? selectedTime1 : 'null',
-          'endTime': selectedTime2 != null ? selectedTime2 : 'null',
-          'startDate': selectedDate1 != null ? selectedDate1 : 'null',
-          //'endDate': selectedDate2 != null ? selectedDate2 : 'null',
-          'isReserved': true,
+          'startTime': thetime,
+          'endTime': thetime2,
+          'startDate': selectedDate1,
+          'endDate': null,
+          'isReserved': false,
           'isParked': false,
-          /*'number_Plate_Parked_Vehicle': 'null',
-          'name_Parked_Vehicle': 'null'*/
+          'number_Plate_Parked_Vehicle': null,
+          'name_Parked_Vehicle': null
         }).then((value) {
-          Navigator.pushReplacementNamed(context, '/mapscreen');
-        }).catchError((error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed')),
-          );
+          Navigator.pushReplacementNamed(context, '/dumper');
         });
       } else {
         showDialog(
@@ -136,22 +131,25 @@ class _AddParkSpotState extends State<AddParkSpot> {
       }
     } else if (!isCheckboxSelected) {
       String? userUid = FirebaseAuth.instance.currentUser?.uid;
-      CollectionReference parkSpots = FirebaseFirestore.instance.collection('Users').doc(userUid).collection('Park_Spots');
-      DateFormat('hh:mm a').format(selectedTime1!);
-      DateFormat('hh:mm a').format(selectedTime2!);
-      DateFormat('dd-MM-yyyy').format(selectedDate1!);
-      DateFormat('dd-MM-yyyy').format(selectedDate2!);
+      CollectionReference parkSpots = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Park_Spots');
+      String thetime = DateFormat('hh:mm a').format(selectedTime1!);
+      String thetime2 = DateFormat('hh:mm a').format(selectedTime2!);
+      String thedate = DateFormat('dd-MM-yyyy').format(selectedDate1!);
+      String thedate2 = DateFormat('dd-MM-yyyy').format(selectedDate2!);
 
       parkSpots.add({
         'location': location,
-        'startTime': selectedTime1 != null ? selectedTime1 : 'null',
-        'endTime': selectedTime2 != null ? selectedTime2 : 'null',
-        'startDate': selectedDate1 != null ? selectedDate1 : 'null',
-        //'endDate': selectedDate2 != null ? selectedDate2 : 'null',
-        'isReserved': true,
+        'startTime': null,
+        'endTime': null,
+        'startDate': thedate,
+        'endDate': thedate2,
+        'isReserved': false,
         'isParked': false,
-        //'number_Plate_Parked_Vehicle': 'null',
-        //'name_Parked_Vehicle': 'null'
+        'number_Plate_Parked_Vehicle': null,
+        'name_Parked_Vehicle': null
       }).then((value) {
         Navigator.pushReplacementNamed(context, '/mapscreen');
       }).catchError((error) {
@@ -181,7 +179,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
   }
 
   void validateAndNavigate() {
-    if (selectedDate1 != null && selectedDate2 != null && !isOneDayChecked) {
+    if (selectedDate1 != null && selectedDate2 != null && !isCheckboxSelected) {
       if (selectedDate2!.isBefore(selectedDate1!)) {
         showDialog(
           context: context,
@@ -203,7 +201,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
       } else {
         checkTime(); // Call checkTime function to validate time
       }
-    } else if (selectedDate1 != null && isOneDayChecked) {
+    } else if (selectedDate1 != null && isCheckboxSelected) {
       selectedDate2 = null; // Set selectedDate2 to null for one-day parking
       checkTime(); // Call checkTime function to validate time
     } else {
@@ -284,10 +282,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                 Checkbox(
                   onChanged: (value) {
                     setState(() {
-                      isChecked = value!;
-                      isOneDayChecked = value;
-                      checkedvisbility = !value;
-                      isCheckboxSelected = value;
+                      isCheckboxSelected = value!;
                       selectedTime1 = null;
                       selectedTime2 = null;
                     });
@@ -297,7 +292,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   checkColor: Color(0xffffffff),
                   hoverColor: Color(0x42000000),
                   splashRadius: 20,
-                  value: isChecked,
+                  value: isCheckboxSelected,
                 ),
               ],
             ),
@@ -542,7 +537,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   ),
                 ),
                 Visibility(
-                  visible: checkedvisbility,
+                  visible: !isCheckboxSelected,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: Text(
@@ -559,7 +554,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                   ),
                 ),
                 Visibility(
-                  visible: checkedvisbility,
+                  visible: !isCheckboxSelected,
                   child: Expanded(
                     flex: 1,
                     child: Padding(
@@ -576,7 +571,7 @@ class _AddParkSpotState extends State<AddParkSpot> {
                         child: Text(
                           selectedDate2 != null
                               ? DateFormat('dd-MM-yyyy').format(selectedDate2!)
-                              : isOneDayChecked
+                              : isCheckboxSelected
                                   ? 'N/A'
                                   : DateFormat('dd-MM-yyyy')
                                       .format(currentDate),
