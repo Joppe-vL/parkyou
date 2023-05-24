@@ -4,12 +4,10 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-List<String> bookingOptions = [
-  "Option 1",
-  "Option 2",
-  "Option 3"
-]; // Unique values
+List<String> bbookingOptions = []; // Initialize as an empty list
 
 class ReleaseParkSpot extends StatefulWidget {
   @override
@@ -17,7 +15,42 @@ class ReleaseParkSpot extends StatefulWidget {
 }
 
 class _ReleaseParkSpotState extends State<ReleaseParkSpot> {
-  String selectedOption = "Option 1"; // Unique values
+  List<String> bookingOptions = [
+    'No Bookings'
+  ]; // Initialize with a default option
+  String selectedOption = 'No Bookings';
+  String selectedOptionId = '';
+
+  Future<void> getBookingOptions() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final CollectionReference vehiclesCollection = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Park_Spots');
+
+      final QuerySnapshot snapshot = await vehiclesCollection.get();
+      final List<String> options = snapshot.docs
+          .map((doc) =>
+              (doc.data() as Map<String, dynamic>)['location'] as String)
+          .toList();
+      setState(() {
+        bookingOptions = options.isNotEmpty ? options : ['No Bookings'];
+        selectedOption = bookingOptions.contains(selectedOption)
+            ? selectedOption
+            : bookingOptions[0];
+      });
+    } catch (e) {
+      print('Error fetching vehicle options: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getBookingOptions();
+  }
+
   TextEditingController time1Controller = TextEditingController();
   DateTime? selectedTime1;
   String selectedTime = "Text";

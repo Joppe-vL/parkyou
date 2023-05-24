@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-List<String> vvehicleOptions = [
-  "Option 1",
-  "Option 2",
-  "Option 3"
-]; // Unique values
+List<String> vvehicleOptions = []; // Initialize as an empty list
 
 class VehicleScreen extends StatefulWidget {
   @override
@@ -12,7 +10,40 @@ class VehicleScreen extends StatefulWidget {
 }
 
 class _VehicleScreenState extends State<VehicleScreen> {
-  String selectedOption = "Option 1";
+  List<String> vvehicleOptions = [
+    'No vehicles'
+  ]; // Initialize with a default option
+  String selectedOption = 'No vehicles';
+  String selectedOptionId = '';
+
+  Future<void> getVehicleOptions() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      final CollectionReference vehiclesCollection = FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Vehicles');
+
+      final QuerySnapshot snapshot = await vehiclesCollection.get();
+      final List<String> options = snapshot.docs
+          .map((doc) => (doc.data() as Map<String, dynamic>)['name'] as String)
+          .toList();
+      setState(() {
+        vvehicleOptions = options.isNotEmpty ? options : ['No vehicles'];
+        selectedOption = vvehicleOptions.contains(selectedOption)
+            ? selectedOption
+            : vvehicleOptions[0];
+      });
+    } catch (e) {
+      print('Error fetching vehicle options: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getVehicleOptions();
+  }
 
   @override
   Widget build(BuildContext context) {
