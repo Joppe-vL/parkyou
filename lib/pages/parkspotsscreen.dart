@@ -109,7 +109,7 @@ class ParkSpotScreen extends StatelessWidget {
                             child: ListTile(
                               tileColor: Color(0xffffffff),
                               title: Text(
-                                docId,
+                                "Location:",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontStyle: FontStyle.normal,
@@ -119,7 +119,8 @@ class ParkSpotScreen extends StatelessWidget {
                                 textAlign: TextAlign.start,
                               ),
                               subtitle: Text(
-                                "Location: $location", // Display "Location: [location]"
+                                location[
+                                    'location'], // Display "Location: [location]"
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontStyle: FontStyle.normal,
@@ -167,55 +168,77 @@ class ParkSpotScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                shrinkWrap: false,
-                physics: ScrollPhysics(),
-                children: [
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacementNamed(
-                            context, '/yourreservedparkspot');
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: fetchLocations(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final locations = snapshot.data!;
+                  return Expanded(
+                    flex: 1,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemCount: locations.length,
+                      itemBuilder: (context, index) {
+                        final location = locations[index];
+                        final docId = locations[index]['docId'];
+                        return Builder(
+                          builder: (context) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/yourparkspot',
+                                arguments: {
+                                  'docId': docId,
+                                },
+                              );
+                            },
+                            child: ListTile(
+                              tileColor: Color(0xffffffff),
+                              title: Text(
+                                "Location:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 14,
+                                  color: Color(0xff000000),
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                              subtitle: Text(
+                                location[
+                                    'location'], // Display "Location: [location]"
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 14,
+                                  color: Color(0xff000000),
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                              dense: true,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 16.0),
+                              selected: false,
+                              selectedTileColor: Color(0x42000000),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                                side: BorderSide(
+                                    color: Color(0x7f9e9e9e), width: 1),
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                      child: ListTile(
-                        tileColor: Color(0xffffffff),
-                        title: Text(
-                          "Location",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 14,
-                            color: Color(0xff000000),
-                          ),
-                          textAlign: TextAlign.start,
-                        ),
-                        subtitle: Text(
-                          "The_Location",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 14,
-                            color: Color(0xff000000),
-                          ),
-                          textAlign: TextAlign.start,
-                        ),
-                        dense: true,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                        selected: false,
-                        selectedTileColor: Color(0x42000000),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                          side: BorderSide(color: Color(0x809e9e9e), width: 1),
-                        ),
-                      ),
                     ),
-                  )
-                ],
-              ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                }
+                return CircularProgressIndicator(); // or any other loading indicator widget
+              },
             ),
           ],
         ),
