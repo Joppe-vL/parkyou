@@ -107,6 +107,33 @@ class _YourParkspotState extends State<YourParkspot> {
     }
   }*/
 
+  void removeParkSpot() async {
+    try {
+      final String? userUid = FirebaseAuth.instance.currentUser?.uid;
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .collection('Park_Spots')
+          .doc(widget.docId)
+          .delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Park spot removed successfully.'),
+        ),
+      );
+
+      // Navigate to another screen or perform any other necessary actions
+    } catch (e) {
+      print('Error removing park spot: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to remove park spot.'),
+        ),
+      );
+    }
+  }
+
   bool isCheckboxUnchecked = false;
   @override
   Widget build(BuildContext context) {
@@ -240,7 +267,7 @@ class _YourParkspotState extends State<YourParkspot> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 5, 0, 0),
                       child: Text(
-                        "licensePlateValue",
+                        "XYZ_123",
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -509,6 +536,7 @@ class _YourParkspotState extends State<YourParkspot> {
                       builder: (context) => MaterialButton(
                         onPressed: () {
                           if (!isCheckboxUnchecked) {
+                            removeParkSpot();
                             Navigator.pushReplacementNamed(
                                 context, '/parkspotsscreen');
                           }
